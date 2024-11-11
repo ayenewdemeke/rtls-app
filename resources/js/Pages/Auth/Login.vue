@@ -1,25 +1,16 @@
 <script setup>
-import Checkbox from '@/Components/Checkbox.vue';
-import GuestLayout from '@/Layouts/GuestLayout.vue';
-import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import TextInput from '@/Components/TextInput.vue';
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import BreezeCheckbox from '@/Components/Checkbox.vue';
+import { useForm } from '@inertiajs/vue3';
 
 defineProps({
-    canResetPassword: {
-        type: Boolean,
-    },
-    status: {
-        type: String,
-    },
+    canResetPassword: Boolean,
+    status: String,
 });
 
 const form = useForm({
     email: '',
     password: '',
-    remember: false,
+    remember: false
 });
 
 const submit = () => {
@@ -28,73 +19,78 @@ const submit = () => {
     });
 };
 </script>
+<script>
+import GuestLayout from '@/Layouts/GuestLayout.vue';
+export default {
+    layout: GuestLayout
+}
+</script>
 
 <template>
-    <GuestLayout>
-        <Head title="Log in" />
 
-        <div v-if="status" class="mb-4 text-sm font-medium text-green-600">
-            {{ status }}
+    <Head title="Log In" />
+
+    <div class="d-flex vh-100 align-items-center">
+        <div class="row justify-content-center w-100">
+            <div class="col-lg-6">
+                <div class="card-group">
+                    <div class="card m-1 p-md-4">
+                        <div class="card-body">
+                            <form @submit.prevent="submit">
+
+                                <h3>Login</h3>
+                                <p class="text-medium-emphasis">Sign In to your account</p>
+                                <div v-if="status" class="text-white bg-green my-3 p-2 rounded">
+                                    {{ status }}
+                                </div>
+                                <div class="input-group"><span class="input-group-text">
+                                        <i class="fa-solid fa-at"></i></span>
+                                    <input id="email" type="email" class="form-control" v-model="form.email"
+                                        name="email" placeholder="Email" required autocomplete="username">
+                                </div>
+                                <small class="text-danger"> {{ form.errors.email }} </small>
+
+
+                                <div class="input-group mt-3"><span class="input-group-text">
+                                        <i class="fa-solid fa-key"></i></span>
+                                    <input id="password" type="password" placeholder="Password" class="form-control"
+                                        name="password" v-model="form.password" autocomplete="current-password"
+                                        required>
+                                </div>
+                                <small class="text-danger"> {{ form.errors.password }} </small>
+
+                                <div class="form-group row mt-3">
+                                    <label class="form-check font-weight-normal">
+                                        <BreezeCheckbox name="remember" v-model:checked="form.remember" />
+                                        <span class="ml-2 text-gray-600">Remember me</span>
+                                    </label>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-4">
+                                        <button type="submit" class="btn btn-primary"
+                                            :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+                                            Log in
+                                        </button>
+                                    </div>
+                                    <div class="col-8 text-end">
+                                        <Link v-if="canResetPassword" :href="route('password.request')"
+                                            class="btn btn-link">
+                                        Change your password
+                                        </Link>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-
-        <form @submit.prevent="submit">
-            <div>
-                <InputLabel for="email" value="Email" />
-
-                <TextInput
-                    id="email"
-                    type="email"
-                    class="mt-1 block w-full"
-                    v-model="form.email"
-                    required
-                    autofocus
-                    autocomplete="username"
-                />
-
-                <InputError class="mt-2" :message="form.errors.email" />
-            </div>
-
-            <div class="mt-4">
-                <InputLabel for="password" value="Password" />
-
-                <TextInput
-                    id="password"
-                    type="password"
-                    class="mt-1 block w-full"
-                    v-model="form.password"
-                    required
-                    autocomplete="current-password"
-                />
-
-                <InputError class="mt-2" :message="form.errors.password" />
-            </div>
-
-            <div class="mt-4 block">
-                <label class="flex items-center">
-                    <Checkbox name="remember" v-model:checked="form.remember" />
-                    <span class="ms-2 text-sm text-gray-600"
-                        >Remember me</span
-                    >
-                </label>
-            </div>
-
-            <div class="mt-4 flex items-center justify-end">
-                <Link
-                    v-if="canResetPassword"
-                    :href="route('password.request')"
-                    class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                >
-                    Forgot your password?
-                </Link>
-
-                <PrimaryButton
-                    class="ms-4"
-                    :class="{ 'opacity-25': form.processing }"
-                    :disabled="form.processing"
-                >
-                    Log in
-                </PrimaryButton>
-            </div>
-        </form>
-    </GuestLayout>
+    </div>
 </template>
+
+<style scoped>
+hr {
+    border-color: #222222;
+}
+</style>

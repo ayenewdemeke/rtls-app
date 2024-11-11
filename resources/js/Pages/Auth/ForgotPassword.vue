@@ -1,15 +1,9 @@
 <script setup>
-import GuestLayout from '@/Layouts/GuestLayout.vue';
 import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import TextInput from '@/Components/TextInput.vue';
-import { Head, useForm } from '@inertiajs/vue3';
+import { useForm } from '@inertiajs/vue3';
 
 defineProps({
-    status: {
-        type: String,
-    },
+    status: String,
 });
 
 const form = useForm({
@@ -20,49 +14,49 @@ const submit = () => {
     form.post(route('password.email'));
 };
 </script>
+<script>
+import GuestLayout from '@/Layouts/GuestLayout.vue';
+export default {
+    layout: GuestLayout
+}
+</script>
 
 <template>
-    <GuestLayout>
-        <Head title="Forgot Password" />
 
-        <div class="mb-4 text-sm text-gray-600">
-            Forgot your password? No problem. Just let us know your email
-            address and we will email you a password reset link that will allow
-            you to choose a new one.
-        </div>
+    <Head title="Forgot Password" />
 
-        <div
-            v-if="status"
-            class="mb-4 text-sm font-medium text-green-600"
-        >
-            {{ status }}
-        </div>
+    <div class="d-flex vh-100 align-items-center">
+        <div class="row justify-content-center w-100">
+            <div class="col-lg-6">
+                <div class="card-group">
+                    <div class="card m-1 p-md-3">
+                        <div class="card-body">
+                            <form @submit.prevent="submit">
+                                <p class="text-medium-emphasis">Forgot your password? No problem. Just let us know your
+                                    email address and we will email you a password
+                                    reset
+                                    link that will allow you to choose a new one.</p>
+                                <div v-if="status" class="text-white bg-green my-3 p-2 rounded">
+                                    {{ status }}
+                                </div>
+                                <div class="input-group"><span class="input-group-text">
+                                        <i class="fa-solid fa-at"></i></span>
+                                    <input id="email" type="email" class="form-control" v-model="form.email"
+                                        name="email" placeholder="Email" required autocomplete="username">
+                                </div>
+                                <small class="text-danger"> {{ form.errors.email }} </small>
 
-        <form @submit.prevent="submit">
-            <div>
-                <InputLabel for="email" value="Email" />
-
-                <TextInput
-                    id="email"
-                    type="email"
-                    class="mt-1 block w-full"
-                    v-model="form.email"
-                    required
-                    autofocus
-                    autocomplete="username"
-                />
-
-                <InputError class="mt-2" :message="form.errors.email" />
+                                <div class="flex items-center justify-end mt-4">
+                                    <button type="submit" class="btn btn-primary"
+                                        :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+                                        Email Password Reset Link
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
             </div>
-
-            <div class="mt-4 flex items-center justify-end">
-                <PrimaryButton
-                    :class="{ 'opacity-25': form.processing }"
-                    :disabled="form.processing"
-                >
-                    Email Password Reset Link
-                </PrimaryButton>
-            </div>
-        </form>
-    </GuestLayout>
+        </div>
+    </div>
 </template>
