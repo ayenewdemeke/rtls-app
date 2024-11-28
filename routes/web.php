@@ -26,6 +26,7 @@ Route::middleware('auth')->prefix('user')->name('user.')->group(function () {
     Route::prefix('work-zones/{work_zone}')->name('work_zones.')->group(function () {
         Route::get('/dashboard', [WorkZonesController::class, 'dashboard'])->name('work_zone.dashboard');
         Route::get('/map', [WorkZonesController::class, 'map'])->name('work_zone.map');
+        Route::get('/map-2', [WorkZonesController::class, 'map_2'])->name('work_zone.map2'); // This is a temporary route, should be deleted later
         Route::resource('/incidents', IncidentController::class);
         Route::resource('/devices', IncidentController::class);
     });

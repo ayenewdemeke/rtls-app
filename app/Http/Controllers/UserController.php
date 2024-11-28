@@ -9,17 +9,19 @@ class UserController extends Controller
 {
     public function dashboard()
     {
-        $work_zones = WorkZone::with('work_zone_status')->get();
+        $workZones = WorkZone::with('work_zone_status')->get();
         return inertia('User/Dashboard')->with([
-            'work_zones' => $work_zones
+            'workZones' => $workZones
         ]);
     }
 
     public function map()
     {
-        $work_zones = WorkZone::all();
+        $workZones = WorkZone::all();
+        $googleMapsApiKey = env('GOOGLE_MAPS_API_KEY');
         return inertia('WorkZones/Map')->with([
-            'work_zones' => $work_zones
+            'workZones' => $workZones,
+            'googleMapsApiKey' => $googleMapsApiKey,
         ]);
     }
 }

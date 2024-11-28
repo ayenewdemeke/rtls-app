@@ -1,93 +1,61 @@
 <script setup>
-import { Map, View, Feature, Overlay } from 'ol'
-import Tile from 'ol/layer/Tile'
-import OSM from 'ol/source/OSM'
-import { fromLonLat } from 'ol/proj'
-import Point from 'ol/geom/Point'
-import { Style } from 'ol/style'
-import Icon from 'ol/style/Icon'
-import VectorLayer from 'ol/layer/Vector'
-import VectorSource from 'ol/source/Vector'
-import { onMounted } from 'vue'
+import { onMounted } from 'vue';
 
 const props = defineProps({
-    work_zones: Array // Change to Array for multiple work zones
-})
+    workZones: Array,
+    googleMapsApiKey: String
+});
 
 const truncate = (input) => input.length > 15 ? input.substring(0, 15) + '...' : input;
 
 onMounted(() => {
-    // Initialize map with default settings
-    const map = new Map({
-        target: 'map',
-        layers: [
-            new Tile({
-                source: new OSM()
-            })
-        ],
-        view: new View({
-            center: fromLonLat([-93.2650, 44.9778]),
-            zoom: 5
-        })
-    });
+    // Check if Google Maps script already exists and remove it
+    const existingScript = document.querySelector('script[src*="maps.googleapis.com"]');
+    if (existingScript) {
+        existingScript.remove();
+    }
 
-    // Define style for icons once
-    const iconStyle = new Style({
-        image: new Icon({
-            anchor: [0.5, 35],
-            anchorXUnits: 'fraction',
-            anchorYUnits: 'pixels',
-            src: '/image/map/icons/pin.png'
-        })
-    });
+    // Load the Google Maps script dynamically
+    const script = document.createElement('script');
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${props.googleMapsApiKey}&libraries=places`;
+    script.async = true;
+    document.head.appendChild(script);
 
-    // Create a vector layer source to hold all features
-    const vectorSource = new VectorSource();
-
-    // Add each work zone as a feature to the vector source
-    props.work_zones.forEach((item) => {
-        const feature = new Feature({
-            geometry: new Point(fromLonLat([item.longitude, item.latitude])),
-            name: truncate(item.name),
-            id: item.id
+    script.onload = () => {
+        const map = new google.maps.Map(document.getElementById('map'), {
+            center: { lat: 44.9778, lng: -93.2650 },
+            zoom: 5,
+            gestureHandling: "greedy"
         });
-        vectorSource.addFeature(feature);
-    });
 
-    // Add a single vector layer with all features to the map
-    const vectorLayer = new VectorLayer({
-        source: vectorSource,
-        style: iconStyle
-    });
-    map.addLayer(vectorLayer);
+        // Tooltip element for displaying work zone names
+        const tooltip = document.getElementById('tooltip');
 
-    // Set up overlay for tooltip
-    const tooltip = document.getElementById('tooltip');
-    const overlay = new Overlay({
-        element: tooltip,
-        offset: [10, 0],
-        positioning: 'bottom-left'
-    });
-    map.addOverlay(overlay);
+        // Add markers for each work zone
+        props.workZones.forEach((zone) => {
+            const marker = new google.maps.Marker({
+                position: { lat: parseFloat(zone.latitude), lng: parseFloat(zone.longitude) },
+                map,
+                title: truncate(zone.name),
+            });
 
-    // Display tooltip with feature name on hover
-    map.on('pointermove', (evt) => {
-        const feature = map.forEachFeatureAtPixel(evt.pixel, (feat) => feat);
-        tooltip.style.display = feature ? '' : 'none';
-        if (feature) {
-            overlay.setPosition(evt.coordinate);
-            tooltip.innerHTML = feature.get('name');
-        }
-    });
+            // Display tooltip on hover
+            marker.addListener('mouseover', () => {
+                tooltip.style.display = 'block';
+                tooltip.innerHTML = marker.getTitle();
+            });
 
-    // Redirect on feature click
-    map.on("click", (event) => {
-        const feature = map.forEachFeatureAtPixel(event.pixel, (feat) => feat);
-        if (feature) {
-            const url = `${window.location.origin}/user/work-zones/${feature.get("id")}/dashboard`;
-            document.location.href = url;
-        }
-    });
+            marker.addListener('mouseout', () => {
+                tooltip.style.display = 'none';
+            });
+
+            // Redirect on click
+            marker.addListener('click', () => {
+                const url = `${window.location.origin}/user/work-zones/${zone.id}/dashboard`;
+                window.location.href = url;
+            });
+        });
+    };
 });
 </script>
 
@@ -95,7 +63,7 @@ onMounted(() => {
 import UserLayout from '@/Layouts/UserLayout.vue';
 export default {
     layout: UserLayout
-}
+};
 </script>
 
 <template>
@@ -105,20 +73,19 @@ export default {
     <div id="tooltip" class="text-bold"></div>
 </template>
 
-<style>
-@import 'ol/ol.css';
-</style>
 <style scoped>
 #map {
     height: 100vh;
     width: 100%;
-    /* Set to 100% for responsiveness */
 }
 
 #tooltip {
+    display: none;
+    position: absolute;
     background-color: white;
     padding: 5px;
     border: 1px solid black;
     border-radius: 3px;
+    z-index: 1;
 }
 </style>

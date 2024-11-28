@@ -19,6 +19,9 @@ class WorkZone extends Model
         'work_zone_status_id',
         'description',
         'image',
+        'system_id',
+        'system_status_id',
+        'system_start_date',
     ];
 
     public function work_zone_status()

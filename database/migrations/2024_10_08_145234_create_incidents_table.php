@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('incidents', function (Blueprint $table) {
             $table->id();
             $table->foreignId('work_zone_id')->constrained();
-            $table->foreignId('system_id')->constrained();
             $table->foreignId('incident_type_id')->constrained();
             $table->date('date');
             $table->timestamps();

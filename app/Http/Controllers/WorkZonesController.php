@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\SystemStatus;
 use App\Models\WorkZone;
 use App\Models\WorkZoneStatus;
 use App\Utils\ImageUploader;
@@ -23,8 +24,10 @@ class WorkZonesController extends Controller
     public function create()
     {
         $work_zone_statuses = WorkZoneStatus::all();
+        $system_statuses = SystemStatus::all();
         return inertia('WorkZones/Create')->with([
             'work_zone_statuses' => $work_zone_statuses,
+            'system_statuses' => $system_statuses,
         ]);
     }
 
@@ -40,6 +43,9 @@ class WorkZonesController extends Controller
             'work_zone_status_id' => 'integer|required',
             'image' => 'nullable|image|max:10240',
             'description' => 'nullable',
+            'system_start_date' => 'date|nullable',
+            'system_id' => 'string|nullable|unique:work_zones,system_id',
+            'system_status_id' => 'integer|nullable',
         ]);
 
         $work_zone = new WorkZone($validated);
@@ -73,11 +79,23 @@ class WorkZonesController extends Controller
         ]);
     }
 
-    public function map()
+    public function map($id)
     {
-        $work_zones = WorkZone::all();
+        $work_zone = WorkZone::findOrFail($id);
+        $google_maps_api_key = env('GOOGLE_MAPS_API_KEY');
         return inertia('WorkZones/WorkZone/Map')->with([
-            'work_zones' => $work_zones
+            'work_zone' => $work_zone,
+            'google_maps_api_key' => $google_maps_api_key,
+        ]);
+    }
+
+    public function map_2($id)
+    {
+        $work_zone = WorkZone::findOrFail($id);
+        $google_maps_api_key = env('GOOGLE_MAPS_API_KEY');
+        return inertia('WorkZones/WorkZone/Map2')->with([
+            'work_zone' => $work_zone,
+            'google_maps_api_key' => $google_maps_api_key,
         ]);
     }
 

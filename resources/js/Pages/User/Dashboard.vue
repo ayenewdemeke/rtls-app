@@ -12,7 +12,7 @@ import { onMounted } from 'vue'
 import { Chart, registerables } from 'chart.js';
 
 const props = defineProps({
-    work_zones: Array,
+    workZones: Array,
 })
 
 Chart.register(...registerables);
@@ -198,7 +198,7 @@ onMounted(() => {
     const vectorSource = new VectorSource()
 
     // Add each work zone as a feature to the vector source
-    props.work_zones.forEach(zone => {
+    props.workZones.forEach(zone => {
         const feature = new Feature({
             geometry: new Point(fromLonLat([zone.longitude, zone.latitude]))
         })

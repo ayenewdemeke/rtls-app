@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('device_id')->unique();
             $table->foreignId('device_type_id')->constrained();
-            $table->foreignId('system_id')->constrained();
+            $table->foreignId('work_zone_id')->constrained();
             $table->decimal('latitude', 10, 7)->nullable();
             $table->decimal('longitude', 11, 7)->nullable();
             $table->foreignId('device_status_id')->constrained();

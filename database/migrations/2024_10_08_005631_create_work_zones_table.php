@@ -24,6 +24,9 @@ return new class extends Migration
             $table->string('image')->nullable();
             $table->string('thumbnail')->nullable();
             $table->text('description')->nullable();
+            $table->string('system_id')->unique()->nullable();
+            $table->date('system_start_date')->nullable();
+            $table->foreignId('system_status_id')->constrained()->nullable();
             $table->timestamps();
         });
     }

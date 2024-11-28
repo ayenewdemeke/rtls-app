@@ -39,6 +39,9 @@ const hideSidebar = () => {
                 <li class="nav-item">
                     <Link :href="route('user.work_zones.index')" class="nav-link">Work zones</Link>
                 </li>
+                <li class="nav-item">
+                    <Link :href="route('user.work_zones.work_zone.map2', work_zone.id)" class="nav-link">MTA Bus</Link>
+                </li>
             </ul>
 
             <!-- Right navbar links -->
@@ -107,8 +110,8 @@ const hideSidebar = () => {
                             </Link>
                         </li>
                         <li class="nav-item" @click="hideSidebar">
-                            <Link :href="'#'" class="nav-link"
-                                :class="{ 'active': $page.url.includes(`/${work_zone.id}/work/map`) }">
+                            <Link :href="route('user.work_zones.work_zone.map', work_zone.id)" class="nav-link"
+                                :class="{ 'active': $page.url.includes(`/${work_zone.id}/map`) }">
                             <i class="nav-icon fa-solid fa-map-location-dot"></i>
                             <p>Real time map</p>
                             </Link>
@@ -137,9 +140,7 @@ const hideSidebar = () => {
 
         <!-- Content Wrapper. Contains page content -->
         <div class="content-wrapper">
-            <div class="container-fluid">
-                <slot />
-            </div>
+            <slot />
         </div>
         <!-- /.content-wrapper -->
 

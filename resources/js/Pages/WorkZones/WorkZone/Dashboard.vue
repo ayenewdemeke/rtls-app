@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { Chart, registerables } from 'chart.js'
 import 'chartjs-adapter-date-fns'
 
@@ -10,88 +10,84 @@ const props = defineProps({
     cord: Object
 })
 
-const liveData = ref([])
+let chart;  // Existing chart for selectable data
+let positionChart;  // New chart for current position
 
-let chartLat, chartLon, chartSpeed, chartBear;
+const selectedChart = ref('Latitude');  // Default selected chart
+
+// Data storage for each chart
+const chartData = {
+    Latitude: { labels: [], data: [], color: 'red' },
+    Longitude: { labels: [], data: [], color: 'blue' },
+    Speed: { labels: [], data: [], color: 'green' },
+    Bearing: { labels: [], data: [], color: 'orange' },
+};
+
+// Data for position chart
+const positionData = ref({ x: null, y: null });
 
 Echo.private('location-updates')
     .listen('LocationUpdated', (e) => {
+        // Update data for each chart
+        const timestamp = e.location.timestamp;
 
-        // // Push new data into liveData array
-        // liveData.value.push({
-        //     timestamp: e.location.timestamp,
-        //     latitude: e.location.latitude,
-        //     longitude: e.location.longitude,
-        //     speed: e.location.speed,
-        //     bearing: e.location.bearing
-        // });
-
-        // // Keep only the last 15 rows
-        // if (liveData.value.length > 15) {
-        //     liveData.value.shift();
-        // }
-
-        // Update latitude chart
-        if (chartLat) {
-            chartLat.data.labels.push(e.location.timestamp);
-            chartLat.data.datasets[0].data.push(e.location.latitude);
-
-            if (chartLat.data.labels.length > 30) {
-                chartLat.data.labels.shift();
-                chartLat.data.datasets[0].data.shift();
-            }
-            chartLat.update();
+        chartData.Latitude.labels.push(timestamp);
+        chartData.Latitude.data.push(e.location.latitude);
+        if (chartData.Latitude.labels.length > 30) {
+            chartData.Latitude.labels.shift();
+            chartData.Latitude.data.shift();
         }
 
-        // Update longitude chart
-        if (chartLon) {
-            chartLon.data.labels.push(e.location.timestamp);
-            chartLon.data.datasets[0].data.push(e.location.longitude);
-
-            if (chartLon.data.labels.length > 30) {
-                chartLon.data.labels.shift();
-                chartLon.data.datasets[0].data.shift();
-            }
-            chartLon.update();
+        chartData.Longitude.labels.push(timestamp);
+        chartData.Longitude.data.push(e.location.longitude);
+        if (chartData.Longitude.labels.length > 30) {
+            chartData.Longitude.labels.shift();
+            chartData.Longitude.data.shift();
         }
 
-        // Update speed chart
-        if (chartSpeed) {
-            chartSpeed.data.labels.push(e.location.timestamp);
-            chartSpeed.data.datasets[0].data.push(e.location.speed);
-
-            if (chartSpeed.data.labels.length > 30) {
-                chartSpeed.data.labels.shift();
-                chartSpeed.data.datasets[0].data.shift();
-            }
-            chartSpeed.update();
+        chartData.Speed.labels.push(timestamp);
+        chartData.Speed.data.push(e.location.speed);
+        if (chartData.Speed.labels.length > 30) {
+            chartData.Speed.labels.shift();
+            chartData.Speed.data.shift();
         }
 
-        // Update bearing chart
-        if (chartBear) {
-            chartBear.data.labels.push(e.location.timestamp);
-            chartBear.data.datasets[0].data.push(e.location.bearing);
+        chartData.Bearing.labels.push(timestamp);
+        chartData.Bearing.data.push(e.location.bearing);
+        if (chartData.Bearing.labels.length > 30) {
+            chartData.Bearing.labels.shift();
+            chartData.Bearing.data.shift();
+        }
 
-            if (chartBear.data.labels.length > 30) {
-                chartBear.data.labels.shift();
-                chartBear.data.datasets[0].data.shift();
-            }
-            chartBear.update();
+        // Update main chart if it's the selected one
+        if (chart) {
+            updateChart();
+        }
+
+        // Update position data
+        positionData.value = {
+            x: e.location.longitude,
+            y: e.location.latitude
+        };
+
+        // Update position chart
+        if (positionChart) {
+            updatePositionChart();
         }
     });
 
 onMounted(() => {
-    // Initialize latitude chart
-    const ctxLat = document.getElementById('lineChartLat').getContext('2d');
-    chartLat = new Chart(ctxLat, {
+    // Initialize the main chart
+    const ctx = document.getElementById('lineChart').getContext('2d');
+    chart = new Chart(ctx, {
         type: 'line',
         data: {
-            labels: [],  // Start with empty labels
+            labels: chartData[selectedChart.value].labels,
             datasets: [{
-                label: 'Latitude',
-                data: [],
-                borderColor: 'red',
-                backgroundColor: 'red',
+                label: selectedChart.value,
+                data: chartData[selectedChart.value].data,
+                borderColor: chartData[selectedChart.value].color,
+                backgroundColor: chartData[selectedChart.value].color,
                 fill: false,
                 tension: 0.1,
                 pointRadius: 4,
@@ -110,113 +106,104 @@ onMounted(() => {
                     time: { tooltipFormat: 'HH:mm:ss', unit: 'second', displayFormats: { second: 'HH:mm:ss' } },
                     title: { display: true, text: 'Time (HH:MM:SS)' }
                 },
-                y: { title: { display: true, text: 'Latitude' }, beginAtZero: false }
+                y: { title: { display: true, text: selectedChart.value }, beginAtZero: false }
             }
         }
     });
 
-    // Initialize longitude chart
-    const ctxLon = document.getElementById('lineChartLon').getContext('2d');
-    chartLon = new Chart(ctxLon, {
-        type: 'line',
+    // Initialize position chart
+    const ctxPosition = document.getElementById('positionChart').getContext('2d');
+    positionChart = new Chart(ctxPosition, {
+        type: 'scatter',
         data: {
-            labels: [],  // Start with empty labels
             datasets: [{
-                label: 'Longitude',
+                label: 'Current Position',
                 data: [],
-                borderColor: 'blue',
-                backgroundColor: 'blue',
-                fill: false,
-                tension: 0.1,
-                pointRadius: 4,
-                pointHoverRadius: 6,
+                backgroundColor: 'red',
+                pointRadius: 8,  // Adjust the size to match Google Maps
+                pointHoverRadius: 10,
             }]
         },
         options: {
             maintainAspectRatio: false,
             responsive: true,
-            plugins: {
-                legend: { display: true, position: 'top' }
-            },
             scales: {
                 x: {
-                    type: 'time',
-                    time: { tooltipFormat: 'HH:mm:ss', unit: 'second', displayFormats: { second: 'HH:mm:ss' } },
-                    title: { display: true, text: 'Time (HH:MM:SS)' }
+                    type: 'linear',
+                    position: 'bottom',
+                    title: {
+                        display: true,
+                        text: 'Longitude'
+                    },
+                    min: -96.796,
+                    max: -96.7952
                 },
-                y: { title: { display: true, text: 'Longitude' }, beginAtZero: false }
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Latitude'
+                    },
+                    min: 46.90225,
+                    max: 46.90235
+                }
+            },
+            plugins: {
+                legend: { display: false }
             }
         }
-    })
+    });
 
-    // Initialize speed chart
-    const ctxSpeed = document.getElementById('lineChartSpeed').getContext('2d');
-    chartSpeed = new Chart(ctxSpeed, {
-        type: 'line',
+    // Number of sensor devices chart
+    const ctxSensorDevices = document.getElementById('sensorDevicesChart').getContext('2d');
+    new Chart(ctxSensorDevices, {
+        type: 'bar',
         data: {
-            labels: [],  // Start with empty labels
+            labels: ['Equipment', 'Workers', 'Traffic Cones'],
             datasets: [{
-                label: 'Speed',
-                data: [],
-                borderColor: 'green',
-                backgroundColor: 'green',
-                fill: false,
-                tension: 0.1,
-                pointRadius: 4,
-                pointHoverRadius: 6,
+                label: 'Number of Sensor Devices',
+                data: [3, 6, 10],  // Static demo data
+                backgroundColor: ['#FF6384', '#36A2EB', '#4BC0C0']
             }]
         },
         options: {
             maintainAspectRatio: false,
             responsive: true,
             plugins: {
-                legend: { display: true, position: 'top' }
+                legend: { display: false }
             },
             scales: {
-                x: {
-                    type: 'time',
-                    time: { tooltipFormat: 'HH:mm:ss', unit: 'second', displayFormats: { second: 'HH:mm:ss' } },
-                    title: { display: true, text: 'Time (HH:MM:SS)' }
-                },
-                y: { title: { display: true, text: 'Speed' }, beginAtZero: false }
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
             }
         }
-    })
+    });
+});
 
-    // Initialize bearing chart
-    const ctxBear = document.getElementById('lineChartBear').getContext('2d');
-    chartBear = new Chart(ctxBear, {
-        type: 'line',
-        data: {
-            labels: [],  // Start with empty labels
-            datasets: [{
-                label: 'Bearing',
-                data: [],
-                borderColor: 'orange',
-                backgroundColor: 'orange',
-                fill: false,
-                tension: 0.1,
-                pointRadius: 4,
-                pointHoverRadius: 6,
-            }]
-        },
-        options: {
-            maintainAspectRatio: false,
-            responsive: true,
-            plugins: {
-                legend: { display: true, position: 'top' }
-            },
-            scales: {
-                x: {
-                    type: 'time',
-                    time: { tooltipFormat: 'HH:mm:ss', unit: 'second', displayFormats: { second: 'HH:mm:ss' } },
-                    title: { display: true, text: 'Time (HH:MM:SS)' }
-                },
-                y: { title: { display: true, text: 'Bearing' }, beginAtZero: false }
-            }
-        }
-    })
-})
+// Watch for changes in selectedChart
+watch(selectedChart, () => {
+    if (chart) {
+        updateChart();
+    }
+});
+
+function updateChart() {
+    chart.data.labels = chartData[selectedChart.value].labels;
+    chart.data.datasets[0].label = selectedChart.value;
+    chart.data.datasets[0].data = chartData[selectedChart.value].data;
+    chart.data.datasets[0].borderColor = chartData[selectedChart.value].color;
+    chart.data.datasets[0].backgroundColor = chartData[selectedChart.value].color;
+    chart.options.scales.y.title.text = selectedChart.value;
+    chart.update();
+}
+
+function updatePositionChart() {
+    positionChart.data.datasets[0].data = [positionData.value];
+    positionChart.update();
+}
 </script>
 
 <script>
@@ -260,121 +247,98 @@ export default {
                 </div>
             </div>
         </div>
-        <!-- <div class="card">
+
+        <!-- Position Chart Card -->
+        <div class="card">
             <div class="card-header">
-                <h4 class="font-weight-normal">Live Location Data</h4>
+                <h4 class="font-weight-normal">Current Position</h4>
             </div>
-            <div class="card-body p-0">
-                <table class="table table-striped mb-0">
-                    <thead>
-                        <tr>
-                            <th>Timestamp</th>
-                            <th>Latitude</th>
-                            <th>Longitude</th>
-                            <th>Speed</th>
-                            <th>Bearing</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="entry in liveData" :key="entry.timestamp">
-                            <td>{{ entry.timestamp }}</td>
-                            <td>{{ entry.latitude }}</td>
-                            <td>{{ entry.longitude }}</td>
-                            <td>{{ entry.speed }}</td>
-                            <td>{{ entry.bearing }}</td>
-                        </tr>
-                    </tbody>
-                </table>
+            <div class="card-body">
+                <canvas class="canvas-location" id="positionChart"></canvas>
             </div>
-        </div> -->
+        </div>
+
+        <!-- Notifications Card -->
+        <div class="row">
+            <div class="col-md-7">
+                <div class="card my-3">
+                    <div class="card-header">
+                        <h4 class="font-weight-normal">Event Log</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-danger pb-0 mb-2" role="alert">
+                            <h6 class="alert-heading"><i class="nav-icon fa-solid fa-ban"></i> Critical incident alert!
+                            </h6>
+                            <p>A severe intrusion has been detected in the work zone. Immediate action is required to
+                                ensure the safety of all workers. Please assess the situation and follow safety
+                                protocols.</p>
+                        </div>
+                        <div class="alert border-secondary pb-0 mb-2" role="alert">
+                            <h6 class="alert-heading"><i class="nav-icon fa-solid fa-info"></i> System update
+                            </h6>
+                            <p>All systems are running smoothly. No anomalies detected in the last 24 hours.</p>
+                        </div>
+                        <div class="alert alert-warning pb-0 mb-2" role="alert">
+                            <h6 class="alert-heading"><i class="nav-icon fa-solid fa-warning"></i> Caution: Sensor
+                                Malfunction!
+                            </h6>
+                            <p>One of the proximity sensors is malfunctioning. Please verify the sensor status to avoid
+                                false detections.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-5">
+                <div class="card my-3">
+                    <div class="card-header">
+                        <h4 class="font-weight-normal">Number of Sensor Devices</h4>
+                    </div>
+                    <div class="card-body">
+                        <canvas class="canvas-device" id="sensorDevicesChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Combined Chart Card -->
         <div class="card">
             <div class="card-header">
                 <div class="row">
                     <div class="col-6">
-                        <h4 class="font-weight-normal">Latitude</h4>
+                        <h4 class="font-weight-normal">{{ selectedChart }}</h4>
                     </div>
                     <div class="col-6 text-right">
-                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                            <i class="fas fa-minus"></i>
-                        </button>
+                        <select class="form-control" v-model="selectedChart">
+                            <option value="Latitude">Latitude</option>
+                            <option value="Longitude">Longitude</option>
+                            <option value="Speed">Speed</option>
+                            <option value="Bearing">Bearing</option>
+                        </select>
                     </div>
                 </div>
             </div>
             <div class="card-body">
-                <canvas id="lineChartLat"></canvas>
+                <canvas class="canvas-location" id="lineChart"></canvas>
             </div>
         </div>
-        <div class="card">
-            <div class="card-header">
-                <div class="row">
-                    <div class="col-6">
-                        <h4 class="font-weight-normal">Longitude</h4>
-                    </div>
-                    <div class="col-6 text-right">
-                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                            <i class="fas fa-minus"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
-            <div class="card-body">
-                <canvas id="lineChartLon"></canvas>
-            </div>
-        </div>
-        <div class="card">
-            <div class="card-header">
-                <div class="row">
-                    <div class="col-6">
-                        <h4 class="font-weight-normal">Speed</h4>
-                    </div>
-                    <div class="col-6 text-right">
-                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                            <i class="fas fa-minus"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
-            <div class="card-body">
-                <canvas id="lineChartSpeed"></canvas>
-            </div>
-        </div>
-        <div class="card">
-            <div class="card-header">
-                <div class="row">
-                    <div class="col-6">
-                        <h4 class="font-weight-normal">Bearing</h4>
-                    </div>
-                    <div class="col-6 text-right">
-                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                            <i class="fas fa-minus"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
-            <div class="card-body">
-                <canvas id="lineChartBear"></canvas>
-            </div>
-        </div>
+
     </div>
 </template>
 
-<style>
-@import 'ol/ol.css';
-</style>
 <style scoped>
-#map {
-    height: 25rem;
-    width: 100%;
-}
-
 .header {
     font-family: 'Roboto', Arial, Helvetica, sans-serif;
     font-size: 1.7rem;
     font-weight: 400;
 }
 
-canvas {
+.canvas-location {
     width: 100%;
     height: 30rem;
+}
+
+.canvas-device {
+    width: 100%;
+    height: 19.5rem;
 }
 </style>

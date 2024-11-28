@@ -126,11 +126,9 @@ const hideSidebar = () => {
 
         <!-- Content Wrapper. Contains page content -->
         <div class="content-wrapper">
-            <div class="container-fluid">
-                <SuccessMessage />
-                <ErrorMessage />
-                <slot />
-            </div>
+            <SuccessMessage />
+            <ErrorMessage />
+            <slot />
         </div>
         <!-- /.content-wrapper -->
 

@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('systems', function (Blueprint $table) {
+        Schema::create('mta_bus_locations', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('work_zone_id')->constrained('work_zones');
-            $table->string('system_id')->unique();
-            $table->date('start_date');
-            $table->foreignId('status_id')->constrained('system_statuses');
+            $table->decimal('latitude', 10, 8);
+            $table->decimal('longitude', 11, 8);
+            $table->string('bus_id')->nullable();
+            $table->timestamp('timestamp')->nullable();
             $table->timestamps();
         });
     }
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('systems');
+        Schema::dropIfExists('mta_bus_locations');
     }
 };
