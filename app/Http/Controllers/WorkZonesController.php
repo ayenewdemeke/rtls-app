@@ -36,7 +36,7 @@ class WorkZonesController extends Controller
         $validated = $request->validate([
             'work_zone_id' => 'string|required|unique:work_zones,work_zone_id',
             'name' => 'string|required',
-            'location' => 'string|nullable',
+            'location' => 'string|required',
             'latitude' => 'numeric|required',
             'longitude' => 'numeric|required',
             'start_date' => 'date|required',

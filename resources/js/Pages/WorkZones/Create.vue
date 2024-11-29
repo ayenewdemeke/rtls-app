@@ -190,7 +190,7 @@ export default {
                             <label for="location">Location</label>
                             <div class="input-group mb-3">
                                 <input id="location" type="text" class="form-control" v-model="form.location"
-                                    name="location" placeholder="Location" autocomplete="location">
+                                    name="location" placeholder="Location" autocomplete="location" required>
                             </div>
                             <InputError :message="form.errors.location"></InputError>
                         </div>
