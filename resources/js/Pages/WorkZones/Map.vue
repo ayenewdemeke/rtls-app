@@ -3,7 +3,7 @@ import { onMounted } from 'vue';
 
 const props = defineProps({
     workZones: Array,
-    googleMapsApiKey: String
+    google_maps_api_key: String
 });
 
 const truncate = (input) => input.length > 15 ? input.substring(0, 15) + '...' : input;
@@ -17,7 +17,7 @@ onMounted(() => {
 
     // Load the Google Maps script dynamically
     const script = document.createElement('script');
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${props.googleMapsApiKey}&libraries=places`;
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${props.google_maps_api_key}&libraries=places`;
     script.async = true;
     document.head.appendChild(script);
 
