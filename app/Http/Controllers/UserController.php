@@ -18,7 +18,7 @@ class UserController extends Controller
     public function map()
     {
         $workZones = WorkZone::all();
-        $google_maps_api_key = env('GOOGLE_MAPS_API_KEY');
+        $google_maps_api_key = config('services.google_maps.api_key');
         return inertia('WorkZones/Map')->with([
             'workZones' => $workZones,
             'google_maps_api_key' => $google_maps_api_key,

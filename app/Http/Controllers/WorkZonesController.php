@@ -82,7 +82,7 @@ class WorkZonesController extends Controller
     public function map($id)
     {
         $work_zone = WorkZone::findOrFail($id);
-        $google_maps_api_key = env('GOOGLE_MAPS_API_KEY');
+        $google_maps_api_key = config('services.google_maps.api_key');
         return inertia('WorkZones/WorkZone/Map')->with([
             'work_zone' => $work_zone,
             'google_maps_api_key' => $google_maps_api_key,
@@ -92,7 +92,7 @@ class WorkZonesController extends Controller
     public function map_2($id)
     {
         $work_zone = WorkZone::findOrFail($id);
-        $google_maps_api_key = env('GOOGLE_MAPS_API_KEY');
+        $google_maps_api_key = config('services.google_maps.api_key');
         return inertia('WorkZones/WorkZone/Map2')->with([
             'work_zone' => $work_zone,
             'google_maps_api_key' => $google_maps_api_key,
