@@ -21,5 +21,19 @@ class UserSeeder extends Seeder
             'password' => Hash::make('12345678'),
         ]);
         $user->roles()->attach(Role::SUPER_ADMIN);
+
+        $user = User::create([
+            'name' => 'Dr. Youjin Jang',
+            'email' => 'y.jang@ndsu.edu',
+            'password' => Hash::make('12345678'),
+        ]);
+        $user->roles()->attach(Role::ADMIN);
+
+        $user = User::create([
+            'name' => 'Dr. Inbae Jeong',
+            'email' => 'inbae.jeong@ndsu.edu',
+            'password' => Hash::make('12345678'),
+        ]);
+        $user->roles()->attach(Role::ADMIN);
     }
 }

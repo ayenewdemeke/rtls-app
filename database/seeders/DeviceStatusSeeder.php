@@ -2,18 +2,18 @@
 
 namespace Database\Seeders;
 
-use App\Models\SystemStatus;
+use App\Models\DeviceStatus;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class SystemStatusSeeder extends Seeder
+class DeviceStatusSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        SystemStatus::insert([
+        DeviceStatus::insert([
             ['name' => 'Pending'],
             ['name' => 'Working'],
             ['name' => 'Under maintenance'],

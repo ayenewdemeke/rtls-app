@@ -18,6 +18,9 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             WorkZoneStatusSeeder::class,
             SystemStatusSeeder::class,
+            DeviceStatusSeeder::class,
+            DeviceTypeSeeder::class,
+            IncidentTypeSeeder::class,
         ]);
     }
 }

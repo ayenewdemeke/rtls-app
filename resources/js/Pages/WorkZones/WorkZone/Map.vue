@@ -2,8 +2,11 @@
 import { onMounted, ref } from 'vue';
 
 const props = defineProps({
+    work_zone: Object,
     google_maps_api_key: String
 });
+
+console.log(props.work_zone.latitude)
 
 let map;
 let deviceMarker;
@@ -25,11 +28,20 @@ onMounted(() => {
     document.head.appendChild(script);
 
     script.onload = () => {
-        // Initialize the map with Fargo, ND as the default center
+        // Initialize the map
         map = new google.maps.Map(document.getElementById('map'), {
-            center: { lat: 46.8949, lng: -96.8010 },
+            center: { lat: parseFloat(props.work_zone.latitude), lng: parseFloat(props.work_zone.longitude) },
             zoom: 20,
-            gestureHandling: "greedy"
+            gestureHandling: "greedy",
+            mapTypeId: google.maps.MapTypeId.SATELLITE,
+            tilt: 0,
+            styles: [
+                {
+                    featureType: "all",
+                    elementType: "labels",
+                    stylers: [{ visibility: "off" }]
+                }
+            ]
         });
 
         // Initialize the device marker

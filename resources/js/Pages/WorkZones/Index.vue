@@ -31,9 +31,9 @@ export default {
                 <tr>
                     <th>#</th>
                     <th>Name</th>
-                    <th>Date Added</th>
+                    <th>Date added</th>
                     <th>Location</th>
-                    <th>System Status</th>
+                    <th>System status</th>
                     <th></th>
                     <th></th>
                 </tr>
@@ -56,7 +56,7 @@ export default {
                         </Link>
                     </td>
                     <td>
-                        <a :href="route('user.work_zones.work_zone.dashboard', work_zone.id)">Open
+                        <a :href="route('user.work_zone.dashboard', work_zone.id)">Open
                         </a>
                     </td>
                 </tr>

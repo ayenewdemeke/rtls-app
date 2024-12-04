@@ -100,7 +100,11 @@ export default {
                 </div>
                 <div>
                     <label for="work_zone_status_id">Status</label>
-                    <div>
+                    <div :class="{
+                            'text-primary': work_zone.work_zone_status_id === 1, // Pending
+                            'text-success': work_zone.work_zone_status_id === 2, // Active
+                            'text-danger': work_zone.work_zone_status_id === 3, // Inactive
+                        }">
                         {{ work_zone.work_zone_status.name }}
                     </div>
                 </div>
@@ -131,6 +135,37 @@ export default {
                 <img v-if="work_zone.image" :src="'/storage/work_zone/image/' + work_zone.image" class="pt-4"
                     alt="image">
                 <img v-else :src="'/storage/work_zone/image/no-image.jpg'" class="pt-4" alt="image">
+            </div>
+        </div>
+    </ShowCard>
+    <ShowCard title="System">
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="container-fluild form-group">
+                    <label for="system_id">System ID</label>
+                    <div>
+                        {{ work_zone.system_id }}
+                    </div>
+                </div>
+                <div>
+                    <label for="system_status_id">Status</label>
+                    <div :class="{
+                            'text-primary': work_zone.system_status_id === 1, // Pending
+                            'text-success': work_zone.system_status_id === 2, // Working
+                            'text-warning': work_zone.system_status_id === 3, // Under maintenance
+                            'text-danger': work_zone.system_status_id === 4, // Not working
+                        }">
+                        {{ work_zone.system_status.name }}
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="container-fluild form-group">
+                    <label for="system_start_date">Start date</label>
+                    <div>
+                        {{ work_zone.system_start_date }}
+                    </div>
+                </div>
             </div>
         </div>
     </ShowCard>

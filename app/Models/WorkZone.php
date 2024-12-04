@@ -28,4 +28,19 @@ class WorkZone extends Model
     {
         return $this->belongsTo(WorkZoneStatus::class);
     }
+
+    public function system_status()
+    {
+        return $this->belongsTo(SystemStatus::class);
+    }
+
+    public function devices()
+    {
+        return $this->hasMany(Device::class);
+    }
+
+    public function incidents()
+    {
+        return $this->hasMany(Incident::class);
+    }
 }

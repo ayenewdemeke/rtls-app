@@ -4,6 +4,7 @@ use App\Events\LocationUpdated;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\GuestController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\WorkZone\DeviceController;
 use App\Http\Controllers\WorkZone\IncidentController;
 use App\Http\Controllers\WorkZonesController;
 use Illuminate\Foundation\Application;
@@ -23,12 +24,11 @@ Route::middleware('auth')->prefix('user')->name('user.')->group(function () {
     Route::get('/work-zones/map', [UserController::class, 'map'])->name('work_zones.map');
     Route::resource('/work-zones', WorkZonesController::class, ['names' => 'work_zones'])->except('update');
     Route::post('/work-zones/{work_zone}', [WorkZonesController::class, 'update'])->name('work_zones.update');
-    Route::prefix('work-zones/{work_zone}')->name('work_zones.')->group(function () {
-        Route::get('/dashboard', [WorkZonesController::class, 'dashboard'])->name('work_zone.dashboard');
-        Route::get('/map', [WorkZonesController::class, 'map'])->name('work_zone.map');
-        Route::get('/map-2', [WorkZonesController::class, 'map_2'])->name('work_zone.map2'); // This is a temporary route, should be deleted later
+    Route::prefix('work-zones/{work_zone}')->name('work_zone.')->group(function () {
+        Route::get('/dashboard', [WorkZonesController::class, 'dashboard'])->name('dashboard');
+        Route::get('/map', [WorkZonesController::class, 'map'])->name('map');
         Route::resource('/incidents', IncidentController::class);
-        Route::resource('/devices', IncidentController::class);
+        Route::resource('/devices', DeviceController::class);
     });
 });
 

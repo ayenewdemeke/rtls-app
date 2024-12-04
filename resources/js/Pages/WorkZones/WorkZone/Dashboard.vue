@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref, watch } from 'vue'
+import { onMounted, watch, ref } from 'vue'
 import { Chart, registerables } from 'chart.js'
 import 'chartjs-adapter-date-fns'
 
@@ -7,11 +7,12 @@ Chart.register(...registerables)
 
 const props = defineProps({
     work_zone: Object,
-    cord: Object
+    cord: Object,
+    google_maps_api_key: String
 })
 
 let chart;  // Existing chart for selectable data
-let positionChart;  // New chart for current position
+let incidentChart;  // New incident chart
 
 const selectedChart = ref('Latitude');  // Default selected chart
 
@@ -23,9 +24,45 @@ const chartData = {
     Bearing: { labels: [], data: [], color: 'orange' },
 };
 
-// Data for position chart
-const positionData = ref({ x: null, y: null });
+// Placeholder data for incident chart
+const incidentData = ref({
+    labels: [
+        '2024-01-01T08:00:00',
+        '2024-03-01T09:00:00',
+        '2024-05-01T10:00:00',
+        '2024-07-01T11:00:00',
+        '2024-09-01T12:00:00',
+        '2024-11-01T13:00:00',
+        '2024-12-01T14:00:00',
+    ],
+    datasets: [
+        {
+            label: 'Near miss',
+            data: [2, 3, 3, 4, 6, 8, 9],
+            borderColor: 'rgba(255, 99, 132, 1)',
+            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+            fill: false,
+            tension: 0.1,
+        },
+        {
+            label: 'Vehicle intrusion',
+            data: [1, 2, 3, 3, 3, 4, 6],
+            borderColor: 'rgba(54, 162, 235, 1)',
+            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+            fill: false,
+            tension: 0.1,
+        }
+    ]
+});
 
+// Initialize Google Maps related variables
+let map;
+let deviceMarker;
+
+// Store the device's current location
+const deviceLocation = ref({ lat: null, lng: null });
+
+// Listen for location updates and update the marker position and chart data
 Echo.private('location-updates')
     .listen('LocationUpdated', (e) => {
         // Update data for each chart
@@ -59,24 +96,40 @@ Echo.private('location-updates')
             chartData.Bearing.data.shift();
         }
 
-        // Update main chart if it's the selected one
         if (chart) {
             updateChart();
         }
+    })
 
-        // Update position data
-        positionData.value = {
-            x: e.location.longitude,
-            y: e.location.latitude
-        };
-
-        // Update position chart
-        if (positionChart) {
-            updatePositionChart();
+onMounted(() => {
+    // Initialize the incident chart
+    const ctxIncident = document.getElementById('incidentChart').getContext('2d');
+    incidentChart = new Chart(ctxIncident, {
+        type: 'line',
+        data: incidentData.value,
+        options: {
+            maintainAspectRatio: false,
+            responsive: true,
+            plugins: {
+                legend: { display: true, position: 'top' }
+            },
+            scales: {
+                x: {
+                    type: 'time',
+                    time: { tooltipFormat: 'yyyy-MM-dd HH:mm', unit: 'month', displayFormats: { hour: 'HH:mm' } },
+                    title: { display: true, text: 'Time' }
+                },
+                y: {
+                    title: { display: true, text: 'Number of incidents' },
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
+            }
         }
     });
 
-onMounted(() => {
     // Initialize the main chart
     const ctx = document.getElementById('lineChart').getContext('2d');
     chart = new Chart(ctx, {
@@ -111,47 +164,55 @@ onMounted(() => {
         }
     });
 
-    // Initialize position chart
-    const ctxPosition = document.getElementById('positionChart').getContext('2d');
-    positionChart = new Chart(ctxPosition, {
-        type: 'scatter',
-        data: {
-            datasets: [{
-                label: 'Current Position',
-                data: [],
-                backgroundColor: 'red',
-                pointRadius: 8,  // Adjust the size to match Google Maps
-                pointHoverRadius: 10,
-            }]
-        },
-        options: {
-            maintainAspectRatio: false,
-            responsive: true,
-            scales: {
-                x: {
-                    type: 'linear',
-                    position: 'bottom',
-                    title: {
-                        display: true,
-                        text: 'Longitude'
-                    },
-                    min: -96.796,
-                    max: -96.7952
-                },
-                y: {
-                    title: {
-                        display: true,
-                        text: 'Latitude'
-                    },
-                    min: 46.90225,
-                    max: 46.90235
-                }
+    // Dynamically load Google Maps script
+    const existingScript = document.querySelector('script[src*="maps.googleapis.com"]');
+    if (existingScript) {
+        existingScript.remove();
+    }
+
+    const script = document.createElement('script');
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${props.google_maps_api_key}&libraries=places`;
+    script.async = true;
+    document.head.appendChild(script);
+
+    script.onload = () => {
+        // Initialize the map
+        map = new google.maps.Map(document.getElementById('map'), {
+            center: {
+                lat: parseFloat(props.work_zone.latitude),
+                lng: parseFloat(props.work_zone.longitude)
             },
-            plugins: {
-                legend: { display: false }
+            zoom: 15,
+            gestureHandling: "greedy"
+        });
+
+        // Initialize the device marker
+        deviceMarker = new google.maps.Marker({
+            map,
+            title: 'Device Location',
+            icon: {
+                path: google.maps.SymbolPath.CIRCLE,
+                scale: 10,
+                fillColor: 'red',
+                fillOpacity: 1,
+                strokeColor: 'white',
+                strokeWeight: 3
             }
-        }
-    });
+        });
+
+        // Listen for location updates
+        Echo.private('location-updates')
+            .listen('LocationUpdated', (e) => {
+                const lat = parseFloat(e.location.latitude);
+                const lng = parseFloat(e.location.longitude);
+
+                // Update device location
+                deviceLocation.value = { lat, lng };
+
+                // Update the marker position
+                deviceMarker.setPosition(deviceLocation.value);
+            });
+    };
 
     // Number of sensor devices chart
     const ctxSensorDevices = document.getElementById('sensorDevicesChart').getContext('2d');
@@ -248,13 +309,13 @@ export default {
             </div>
         </div>
 
-        <!-- Position Chart Card -->
+        <!-- Current Position Map Card -->
         <div class="card">
             <div class="card-header">
-                <h4 class="font-weight-normal">Current Position</h4>
+                <h4 class="font-weight-normal">Current position</h4>
             </div>
             <div class="card-body">
-                <canvas class="canvas-location" id="positionChart"></canvas>
+                <div id="map" class="map-container"></div>
             </div>
         </div>
 
@@ -263,7 +324,7 @@ export default {
             <div class="col-md-7">
                 <div class="card my-3">
                     <div class="card-header">
-                        <h4 class="font-weight-normal">Event Log</h4>
+                        <h4 class="font-weight-normal">Event log</h4>
                     </div>
                     <div class="card-body">
                         <div class="alert alert-danger pb-0 mb-2" role="alert">
@@ -291,12 +352,22 @@ export default {
             <div class="col-md-5">
                 <div class="card my-3">
                     <div class="card-header">
-                        <h4 class="font-weight-normal">Number of Sensor Devices</h4>
+                        <h4 class="font-weight-normal">Number of sensor devices</h4>
                     </div>
                     <div class="card-body">
                         <canvas class="canvas-device" id="sensorDevicesChart"></canvas>
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <!-- Incident vs Time Chart Card -->
+        <div class="card">
+            <div class="card-header">
+                <h4 class="font-weight-normal">Incidents over time</h4>
+            </div>
+            <div class="card-body">
+                <canvas class="canvas-location" id="incidentChart"></canvas>
             </div>
         </div>
 
@@ -340,5 +411,11 @@ export default {
 .canvas-device {
     width: 100%;
     height: 19.5rem;
+}
+
+.map-container {
+    width: 100%;
+    height: 30rem;
+    /* Adjust height as needed */
 }
 </style>

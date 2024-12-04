@@ -62,7 +62,7 @@ class WorkZonesController extends Controller
 
     public function show($id)
     {
-        $work_zone = WorkZone::with('work_zone_status')->findOrFail($id);
+        $work_zone = WorkZone::with(['work_zone_status', 'system_status'])->findOrFail($id);
         return inertia('WorkZones/Show')->with([
             'work_zone' => $work_zone,
         ]);
@@ -71,11 +71,12 @@ class WorkZonesController extends Controller
     public function dashboard($id)
     {
         $work_zone = WorkZone::with('work_zone_status')->findOrFail($id);
-
         $cord = [$work_zone->longitude, $work_zone->latitude];
+        $google_maps_api_key = config('services.google_maps.api_key');
         return inertia('WorkZones/WorkZone/Dashboard')->with([
             'work_zone' => $work_zone,
             'cord' => $cord,
+            'google_maps_api_key' => $google_maps_api_key,
         ]);
     }
 
@@ -84,16 +85,6 @@ class WorkZonesController extends Controller
         $work_zone = WorkZone::findOrFail($id);
         $google_maps_api_key = config('services.google_maps.api_key');
         return inertia('WorkZones/WorkZone/Map')->with([
-            'work_zone' => $work_zone,
-            'google_maps_api_key' => $google_maps_api_key,
-        ]);
-    }
-
-    public function map_2($id)
-    {
-        $work_zone = WorkZone::findOrFail($id);
-        $google_maps_api_key = config('services.google_maps.api_key');
-        return inertia('WorkZones/WorkZone/Map2')->with([
             'work_zone' => $work_zone,
             'google_maps_api_key' => $google_maps_api_key,
         ]);

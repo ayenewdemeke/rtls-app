@@ -39,9 +39,6 @@ const hideSidebar = () => {
                 <li class="nav-item">
                     <Link :href="route('user.work_zones.index')" class="nav-link">Work zones</Link>
                 </li>
-                <li class="nav-item">
-                    <Link :href="route('user.work_zones.work_zone.map2', work_zone.id)" class="nav-link">MTA Bus</Link>
-                </li>
             </ul>
 
             <!-- Right navbar links -->
@@ -103,28 +100,28 @@ const hideSidebar = () => {
                     <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
                         data-accordion="false">
                         <li class="nav-item" @click="hideSidebar">
-                            <Link :href="route('user.work_zones.work_zone.dashboard', work_zone.id)" class="nav-link"
+                            <Link :href="route('user.work_zone.dashboard', work_zone.id)" class="nav-link"
                                 :class="{ 'active': $page.url.includes(`/${work_zone.id}/dashboard`) }">
                             <i class="nav-icon fa-solid fa-list"></i>
                             <p>Dashboard</p>
                             </Link>
                         </li>
                         <li class="nav-item" @click="hideSidebar">
-                            <Link :href="route('user.work_zones.work_zone.map', work_zone.id)" class="nav-link"
+                            <Link :href="route('user.work_zone.map', work_zone.id)" class="nav-link"
                                 :class="{ 'active': $page.url.includes(`/${work_zone.id}/map`) }">
                             <i class="nav-icon fa-solid fa-map-location-dot"></i>
                             <p>Real time map</p>
                             </Link>
                         </li>
                         <li class="nav-item" @click="hideSidebar">
-                            <Link :href="'#'" class="nav-link"
+                            <Link :href="route('user.work_zone.incidents.index', work_zone.id)" class="nav-link"
                                 :class="{ 'active': $page.url.includes(`/${work_zone.id}/incidents`) }">
                             <i class="nav-icon fa-solid fa-triangle-exclamation"></i>
                             <p>Incidents</p>
                             </Link>
                         </li>
                         <li class="nav-item" @click="hideSidebar">
-                            <Link :href="'#'" class="nav-link"
+                            <Link :href="route('user.work_zone.devices.index', work_zone.id)" class="nav-link"
                                 :class="{ 'active': $page.url.includes(`/${work_zone.id}/devices`) }">
                             <i class="nav-icon fa-solid fa-gear"></i>
                             <p>Devices</p>
