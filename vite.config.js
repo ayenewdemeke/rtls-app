@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite';
 import laravel from 'laravel-vite-plugin';
 import vue from '@vitejs/plugin-vue';
+import { VitePWA } from 'vite-plugin-pwa';
 
 export default defineConfig({
     plugins: [
@@ -14,6 +15,30 @@ export default defineConfig({
                     base: null,
                     includeAbsolute: false,
                 },
+            },
+        }),
+        VitePWA({
+            registerType: 'autoUpdate',
+            injectRegister: 'auto',
+            outDir: 'public',
+            manifest: {
+                name: 'MnDOT Work Zone',
+                short_name: 'MnDOT',
+                description: 'MnDOT work zone management system',
+                theme_color: '#ffffff',
+                start_url: '/',
+                icons: [
+                    {
+                        src: '/image/icon-192x192.png',
+                        sizes: '192x192',
+                        type: 'image/png',
+                    },
+                    {
+                        src: '/image/icon-512x512.png',
+                        sizes: '512x512',
+                        type: 'image/png',
+                    },
+                ],
             },
         }),
     ],

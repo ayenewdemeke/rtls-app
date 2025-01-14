@@ -106,13 +106,13 @@ const hideSidebar = () => {
                             <p>Dashboard</p>
                             </Link>
                         </li>
-                        <li class="nav-item" @click="hideSidebar">
+                        <!-- <li class="nav-item" @click="hideSidebar">
                             <Link :href="route('user.work_zone.map', work_zone.id)" class="nav-link"
                                 :class="{ 'active': $page.url.includes(`/${work_zone.id}/map`) }">
                             <i class="nav-icon fa-solid fa-map-location-dot"></i>
                             <p>Real time map</p>
                             </Link>
-                        </li>
+                        </li> -->
                         <li class="nav-item" @click="hideSidebar">
                             <Link :href="route('user.work_zone.incidents.index', work_zone.id)" class="nav-link"
                                 :class="{ 'active': $page.url.includes(`/${work_zone.id}/incidents`) }">
