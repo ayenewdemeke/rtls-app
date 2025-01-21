@@ -11,7 +11,7 @@ defineProps({
 })
 
 const form = useForm({
-    device_id: '',
+    mac_address: '',
     device_type_id: '',
     device_status_id: '',
     description: ''
@@ -43,14 +43,14 @@ export default {
                 <div class="row">
                     <div class="col-lg-6">
                         <div class="container-fluild form-group">
-                            <label for="device_id">Device ID
+                            <label for="mac_address">Device MAC Address
                                 <Req />
                             </label>
                             <div class="input-group mb-3">
-                                <input id="device_id" type="text" class="form-control" v-model="form.device_id"
-                                    name="device_id" placeholder="Device ID" required autocomplete="device_id">
+                                <input id="mac_address" type="text" class="form-control" v-model="form.mac_address"
+                                    name="mac_address" placeholder="MAC Address" required autocomplete="mac_address">
                             </div>
-                            <InputError :message="form.errors.device_id"></InputError>
+                            <InputError :message="form.errors.mac_address"></InputError>
                         </div>
                         <div>
                             <label for="device_type_id">Device type

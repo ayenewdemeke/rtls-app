@@ -17,16 +17,16 @@ class ReadingController extends Controller
         return Reading::all();
     }
 
-    public function showByDevice($device_id)
+    public function showByDevice($mac_address)
     {
-        $device = Device::where('device_id', $device_id)->firstOrFail();
+        $device = Device::where('mac_address', $mac_address)->firstOrFail();
         return Reading::where('device_id', $device->id)->get();
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'device_id' => 'required|string|exists:devices,device_id', // user-assigned device ID
+            'mac_address' => 'required|string|exists:devices,mac_address',
             'time' => 'required|numeric',
             'gps_x' => 'required|numeric',
             'gps_y' => 'required|numeric',
@@ -39,12 +39,12 @@ class ReadingController extends Controller
         ]);
 
         // Find the device by its string-based ID field
-        $device = Device::where('device_id', $validated['device_id'])->firstOrFail();
+        $device = Device::where('mac_address', $validated['mac_address'])->firstOrFail();
 
         // Convert UNIX timestamp to MySQL date-time
         $formattedTime = Carbon::createFromTimestamp($validated['time'])->format('Y-m-d H:i:s');
 
-        // Create the reading record with the numeric device ID
+        // Create the reading record with the MAC address
         $reading = Reading::create([
             'device_id' => $device->id,
             'time' => $formattedTime,

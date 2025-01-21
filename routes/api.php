@@ -16,9 +16,9 @@ Route::post('/fused-measurements', [MeasurementController::class, 'store']);
 // Get
 Route::get('/devices', [DeviceController::class, 'index']);
 Route::get('/device-readings', [ReadingController::class, 'index']);
-Route::get('/device-readings/{device_id}', [ReadingController::class, 'showByDevice']);
+Route::get('/device-readings/{mac_address}', [ReadingController::class, 'showByDevice']);
 Route::get('/fused-measurements', [MeasurementController::class, 'index']);
-Route::get('/fused-measurements/{device_id}', [MeasurementController::class, 'showByDevice']);
+Route::get('/fused-measurements/{mac_address}', [MeasurementController::class, 'showByDevice']);
 
 Route::get('/user', function (Request $request) {
     return $request->user();

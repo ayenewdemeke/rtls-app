@@ -17,9 +17,9 @@ class MeasurementController extends Controller
         return FusedMeasurement::all();
     }
 
-    public function showByDevice($device_id)
+    public function showByDevice($mac_address)
     {
-        $device = Device::where('device_id', $device_id)->firstOrFail();
+        $device = Device::where('mac_address', $mac_address)->firstOrFail();
         return FusedMeasurement::where('device_id', $device->id)->get();
     }
 
@@ -27,7 +27,7 @@ class MeasurementController extends Controller
     {
         // Validate the incoming data
         $validated = $request->validate([
-            'device_id' => 'required|string|exists:devices,device_id',  // user-assigned device ID
+            'mac_address' => 'required|string|exists:devices,mac_address',
             'time' => 'required|numeric',
             'position_x' => 'required|numeric',
             'position_y' => 'required|numeric',
@@ -35,8 +35,8 @@ class MeasurementController extends Controller
             'velocity_y' => 'required|numeric',
         ]);
 
-        // Find the actual device row by the user-assigned device_id
-        $device = Device::where('device_id', $validated['device_id'])->firstOrFail();
+        // Find the actual device row by the mac_address
+        $device = Device::where('mac_address', $validated['mac_address'])->firstOrFail();
 
         // Convert UNIX timestamp to a MySQL date-time format
         $formattedTime = Carbon::createFromTimestamp($validated['time'])->format('Y-m-d H:i:s');

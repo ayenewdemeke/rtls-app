@@ -17,7 +17,7 @@ class DeviceController extends Controller
     {
         // Validate the incoming request data
         $validated = $request->validate([
-            'device_id' => 'required|string|unique:devices,device_id',
+            'mac_address' => 'required|string|unique:devices,mac_address',
             'device_type_id' => 'integer|required|exists:device_types,id',
             'work_zone_id' => 'integer|required|exists:work_zones,id',
             'latitude' => 'nullable|numeric',

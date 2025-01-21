@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('devices', function (Blueprint $table) {
             $table->id();
-            $table->string('device_id')->unique();
+            $table->string('mac_address')->unique();
             $table->foreignId('device_type_id')->constrained();
             $table->foreignId('work_zone_id')->constrained()->onDelete('cascade');
             $table->decimal('latitude', 10, 7)->nullable();

@@ -36,7 +36,7 @@ export default {
                     <td>{{ index + 1 }}</td>
                     <td>{{ incident.incident_type.name }}</td>
                     <td>{{ new Date(incident.date).toLocaleDateString() }}</td>
-                    <td>{{ incident.devices.map((device) => device.device_id).join(', ') }}</td>
+                    <td>{{ incident.devices.map((device) => device.mac_address).join(', ') }}</td>
                 </tr>
             </template>
             <template v-else v-slot:tbody>

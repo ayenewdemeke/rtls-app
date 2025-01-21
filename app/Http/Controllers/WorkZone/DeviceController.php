@@ -36,7 +36,7 @@ class DeviceController extends Controller
     public function store($id, Request $request)
     {
         $validated = $request->validate([
-            'device_id' => 'string|required|unique:devices,device_id',
+            'mac_address' => 'string|required|unique:devices,mac_address',
             'device_type_id' => 'integer|required',
             'device_status_id' => 'integer|required',
             'description' => 'nullable',

@@ -31,7 +31,7 @@ export default {
             <template v-slot:thead>
                 <tr>
                     <th>#</th>
-                    <th>Device ID</th>
+                    <th>MAC Address</th>
                     <th>Device type</th>
                     <th>Device status</th>
                     <th>Latitude</th>
@@ -42,7 +42,7 @@ export default {
             <template v-if="Object.keys(devices).length" v-slot:tbody>
                 <tr v-for="device, index in devices" :key="device.id">
                     <td>{{ index + 1 }}</td>
-                    <td>{{ device.device_id }}</td>
+                    <td>{{ device.mac_address }}</td>
                     <td>{{ device.device_type.name }}</td>
                     <td :class="{
                         'text-primary': device.device_status_id === 1, // Pending
