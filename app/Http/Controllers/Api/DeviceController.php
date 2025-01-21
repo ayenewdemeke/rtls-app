@@ -26,8 +26,6 @@ class DeviceController extends Controller
             'description' => 'nullable',
         ]);
 
-        return $request;
-
         // Create the device record
         $device = Device::create($validated);
 
