@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Controller;
 use App\Events\LocationUpdated;
 use App\Models\Location;
 use Carbon\Carbon;
@@ -38,12 +39,8 @@ class LocationController extends Controller
         // Save to the database
         $location = Location::create($validated);
 
-        Log::info('Dispatching LocationUpdated event');
-
         // Broadcast the LocationUpdated event
         broadcast(new LocationUpdated($location));
-
-        Log::info('Event dispatched');
 
         return response()->json(['status' => 'success'], 200);
     }

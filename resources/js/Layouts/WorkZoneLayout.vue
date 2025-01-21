@@ -127,6 +127,13 @@ const hideSidebar = () => {
                             <p>Devices</p>
                             </Link>
                         </li>
+                        <li class="nav-item" @click="hideSidebar">
+                            <Link :href="route('user.work_zone.test', work_zone.id)" class="nav-link"
+                                :class="{ 'active': $page.url.includes(`/${work_zone.id}/test`) }">
+                            <i class="nav-icon fa-solid fa-flask"></i>
+                            <p>Test</p>
+                            </Link>
+                        </li>
                     </ul>
                 </nav>
                 <!-- /.sidebar-menu -->

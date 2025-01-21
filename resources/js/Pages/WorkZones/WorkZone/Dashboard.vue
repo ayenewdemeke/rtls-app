@@ -14,16 +14,6 @@ const props = defineProps({
 let chart;  // Existing chart for selectable data
 let incidentChart;  // New incident chart
 
-const selectedChart = ref('Latitude');  // Default selected chart
-
-// Data storage for each chart
-const chartData = {
-    Latitude: { labels: [], data: [], color: 'red' },
-    Longitude: { labels: [], data: [], color: 'blue' },
-    Speed: { labels: [], data: [], color: 'green' },
-    Bearing: { labels: [], data: [], color: 'orange' },
-};
-
 // Placeholder data for incident chart
 const incidentData = ref({
     labels: [
@@ -62,45 +52,6 @@ let deviceMarker;
 // Store the device's current location
 const deviceLocation = ref({ lat: null, lng: null });
 
-// Listen for location updates and update the marker position and chart data
-Echo.private('location-updates')
-    .listen('LocationUpdated', (e) => {
-        // Update data for each chart
-        const timestamp = e.location.timestamp;
-
-        chartData.Latitude.labels.push(timestamp);
-        chartData.Latitude.data.push(e.location.latitude);
-        if (chartData.Latitude.labels.length > 30) {
-            chartData.Latitude.labels.shift();
-            chartData.Latitude.data.shift();
-        }
-
-        chartData.Longitude.labels.push(timestamp);
-        chartData.Longitude.data.push(e.location.longitude);
-        if (chartData.Longitude.labels.length > 30) {
-            chartData.Longitude.labels.shift();
-            chartData.Longitude.data.shift();
-        }
-
-        chartData.Speed.labels.push(timestamp);
-        chartData.Speed.data.push(e.location.speed);
-        if (chartData.Speed.labels.length > 30) {
-            chartData.Speed.labels.shift();
-            chartData.Speed.data.shift();
-        }
-
-        chartData.Bearing.labels.push(timestamp);
-        chartData.Bearing.data.push(e.location.bearing);
-        if (chartData.Bearing.labels.length > 30) {
-            chartData.Bearing.labels.shift();
-            chartData.Bearing.data.shift();
-        }
-
-        if (chart) {
-            updateChart();
-        }
-    })
-
 onMounted(() => {
     // Initialize the incident chart
     const ctxIncident = document.getElementById('incidentChart').getContext('2d');
@@ -126,40 +77,6 @@ onMounted(() => {
                         stepSize: 1
                     }
                 }
-            }
-        }
-    });
-
-    // Initialize the main chart
-    const ctx = document.getElementById('lineChart').getContext('2d');
-    chart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: chartData[selectedChart.value].labels,
-            datasets: [{
-                label: selectedChart.value,
-                data: chartData[selectedChart.value].data,
-                borderColor: chartData[selectedChart.value].color,
-                backgroundColor: chartData[selectedChart.value].color,
-                fill: false,
-                tension: 0.1,
-                pointRadius: 4,
-                pointHoverRadius: 6,
-            }]
-        },
-        options: {
-            maintainAspectRatio: false,
-            responsive: true,
-            plugins: {
-                legend: { display: true, position: 'top' }
-            },
-            scales: {
-                x: {
-                    type: 'time',
-                    time: { tooltipFormat: 'HH:mm:ss', unit: 'second', displayFormats: { second: 'HH:mm:ss' } },
-                    title: { display: true, text: 'Time (HH:MM:SS)' }
-                },
-                y: { title: { display: true, text: selectedChart.value }, beginAtZero: false }
             }
         }
     });
@@ -243,28 +160,6 @@ onMounted(() => {
         }
     });
 });
-
-// Watch for changes in selectedChart
-watch(selectedChart, () => {
-    if (chart) {
-        updateChart();
-    }
-});
-
-function updateChart() {
-    chart.data.labels = chartData[selectedChart.value].labels;
-    chart.data.datasets[0].label = selectedChart.value;
-    chart.data.datasets[0].data = chartData[selectedChart.value].data;
-    chart.data.datasets[0].borderColor = chartData[selectedChart.value].color;
-    chart.data.datasets[0].backgroundColor = chartData[selectedChart.value].color;
-    chart.options.scales.y.title.text = selectedChart.value;
-    chart.update();
-}
-
-function updatePositionChart() {
-    positionChart.data.datasets[0].data = [positionData.value];
-    positionChart.update();
-}
 </script>
 
 <script>
@@ -368,28 +263,6 @@ export default {
             </div>
             <div class="card-body">
                 <canvas class="canvas-location" id="incidentChart"></canvas>
-            </div>
-        </div>
-
-        <!-- Combined Chart Card -->
-        <div class="card">
-            <div class="card-header">
-                <div class="row">
-                    <div class="col-6">
-                        <h4 class="font-weight-normal">{{ selectedChart }}</h4>
-                    </div>
-                    <div class="col-6 text-right">
-                        <select class="form-control" v-model="selectedChart">
-                            <option value="Latitude">Latitude</option>
-                            <option value="Longitude">Longitude</option>
-                            <option value="Speed">Speed</option>
-                            <option value="Bearing">Bearing</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-            <div class="card-body">
-                <canvas class="canvas-location" id="lineChart"></canvas>
             </div>
         </div>
 

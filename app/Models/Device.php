@@ -12,6 +12,9 @@ class Device extends Model
     protected $fillable = [
         'device_id',
         'device_type_id',
+        'work_zone_id',
+        'latitude',
+        'longitude',
         'device_status_id',
         'description',
     ];

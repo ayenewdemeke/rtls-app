@@ -1,15 +1,12 @@
 <?php
 
-use App\Events\LocationUpdated;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\GuestController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WorkZone\DeviceController;
 use App\Http\Controllers\WorkZone\IncidentController;
 use App\Http\Controllers\WorkZonesController;
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
 Route::get('/', [GuestController::class, 'index'])->name('welcome');
 Route::get('/about', [GuestController::class, 'about'])->name('about');
@@ -29,6 +26,7 @@ Route::middleware('auth')->prefix('user')->name('user.')->group(function () {
         Route::get('/map', [WorkZonesController::class, 'map'])->name('map');
         Route::resource('/incidents', IncidentController::class);
         Route::resource('/devices', DeviceController::class);
+        Route::get('/test', [WorkZonesController::class, 'test'])->name('test');
     });
 });
 

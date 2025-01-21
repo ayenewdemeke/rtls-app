@@ -7,5 +7,13 @@ Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
 });
 
 Broadcast::channel('location-updates', function ($user) {
-    return auth()->check(); // Allows only authenticated users to listen
+    return $user !== null; // Ensures the user is authenticated
+});
+
+Broadcast::channel('reading-updates', function ($user) {
+    return $user !== null;
+});
+
+Broadcast::channel('measurement-updates', function ($user) {
+    return $user !== null;
 });

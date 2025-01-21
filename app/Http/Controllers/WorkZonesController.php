@@ -97,7 +97,7 @@ class WorkZonesController extends Controller
         ]);
 
         // Check if the provided email matches the authenticated user's email
-        if ($request->email === auth()->user()->email) {
+        if ($request->email === Auth::user()->email) {
             // Find the work zone by ID, or fail if not found
             $work_zone = WorkZone::findOrFail($id);
 
@@ -117,5 +117,17 @@ class WorkZonesController extends Controller
             // If the email doesn't match, redirect back with an error message
             return back()->with('error', 'Work zone could not be deleted, the email entered does not match your email.');
         }
+    }
+
+    public function test($id)
+    {
+        $work_zone = WorkZone::with('work_zone_status')->findOrFail($id);
+        $cord = [$work_zone->longitude, $work_zone->latitude];
+        $google_maps_api_key = config('services.google_maps.api_key');
+        return inertia('WorkZones/WorkZone/Test')->with([
+            'work_zone' => $work_zone,
+            'cord' => $cord,
+            'google_maps_api_key' => $google_maps_api_key,
+        ]);
     }
 }
