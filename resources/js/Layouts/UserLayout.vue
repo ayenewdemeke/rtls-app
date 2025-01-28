@@ -44,8 +44,8 @@ const hideSidebar = () => {
                         <img v-if="$page.props.auth.user.image"
                             :src="'/storage/user/image/' + $page.props.auth.user.image" class="rounded-circle"
                             height="30" alt="img" loading="lazy" />
-                        <img v-else :src="'/storage/user/image/default.png'" class="rounded-circle" height="35"
-                            alt="img" loading="lazy" />
+                        <img v-else :src="'/image/user/default.png'" class="rounded-circle" height="35" alt="img"
+                            loading="lazy" />
                     </a>
                     <ul class="dropdown-menu dropdown-menu-start dropdown-menu-lg-start">
                         <li>
@@ -53,8 +53,8 @@ const hideSidebar = () => {
                             <img v-if="$page.props.auth.user.image"
                                 :src="'/storage/user/image/' + $page.props.auth.user.image" class="rounded-circle"
                                 height="45" alt="img" loading="lazy" />
-                            <img v-else :src="'/storage/user/image/default.png'" class="rounded-circle" height="45"
-                                alt="img" loading="lazy" />
+                            <img v-else :src="'/image/user/default.png'" class="rounded-circle" height="45" alt="img"
+                                loading="lazy" />
                             <div class="ms-2">
                                 <div>{{ $page.props.auth.user.name }}</div>
                                 <small>{{ $page.props.auth.user.email }}</small>
@@ -84,7 +84,7 @@ const hideSidebar = () => {
                             alt="">
                     </div>
                     <div v-else class="image">
-                        <img :src="'/storage/user/image/default.png'" class="img-circle elevation-2" alt="">
+                        <img :src="'/image/user/default.png'" class="img-circle elevation-2" alt="">
                     </div>
                     <div class="info">
                         <a href="#" class="d-block">{{ $page.props.auth.user.name }}</a>

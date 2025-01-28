@@ -15,9 +15,9 @@ Route::middleware('auth')->prefix('user')->name('user.')->group(function () {
     Route::get('register-user', [RegisteredUserController::class, 'create'])->name('register');
     Route::post('register', [RegisteredUserController::class, 'store']);
     Route::get('/dashboard', [UserController::class, 'dashboard'])->name('dashboard');
-    Route::get('/profile', [UserController::class, 'show_profile'])->name('profile.show');
-    Route::get('/profile/edit', [UserController::class, 'edit_profile'])->name('profile.edit');
-    Route::post('/profile', [UserController::class, 'update_profile'])->name('profile.update');
+    Route::get('/profile', [UserController::class, 'showProfile'])->name('profile.show');
+    Route::get('/profile/edit', [UserController::class, 'editProfile'])->name('profile.edit');
+    Route::post('/profile', [UserController::class, 'updateProfile'])->name('profile.update');
     Route::get('/work-zones/map', [UserController::class, 'map'])->name('work_zones.map');
     Route::resource('/work-zones', WorkZonesController::class, ['names' => 'work_zones'])->except('update');
     Route::post('/work-zones/{work_zone}', [WorkZonesController::class, 'update'])->name('work_zones.update');

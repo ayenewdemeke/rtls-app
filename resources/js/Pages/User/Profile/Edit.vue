@@ -1,5 +1,6 @@
 <script setup>
 import { useForm } from '@inertiajs/vue3'
+import InputError from '@/Components/InputError.vue'
 const props = defineProps({
     user: Object
 })
@@ -26,17 +27,20 @@ export default {
     layout: UserLayout
 }
 </script>
-    
+
 <template>
+
+    <Head title="Profile" />
+
     <div class="pt-3">
-        <div class="card">
+        <div class="card p-3">
             <form @submit.prevent="submit">
                 <div class="row">
                     <div class="col-md-6 offset-md-3">
                         <div class="text-center my-5">
-                            <img id="imageview" v-if="user.image" :src="'/storage/user/image/' + user.image" class="rounded"
-                                style="width: 25%" alt="">
-                            <img id="imageview" v-else :src="'/storage/user/image/default.png'" class="rounded"
+                            <img id="imageview" v-if="user.image" :src="'/storage/user/image/' + user.image"
+                                class="rounded" style="width: 25%" alt="">
+                            <img id="imageview" v-else :src="'/image/user/default.png'" class="rounded"
                                 style="width: 25%" alt="image">
                             <div class="text-center m-3">
                                 <input type="file" style="width: 100px" accept="image/*" @input="acceptImage" />
@@ -49,16 +53,16 @@ export default {
                             <li class="list-group-item">
                                 <div class="input-group">
                                     Name
-                                    <input id="name" type="text" class="ml-5 form-control text-right" v-model="form.name"
-                                        name="name" placeholder="Name" required autocomplete="name">
+                                    <input id="name" type="text" class="ml-5 form-control text-right"
+                                        v-model="form.name" name="name" placeholder="Name" required autocomplete="name">
                                 </div>
                                 <InputError :message="form.errors.name"></InputError>
                             </li>
                             <li class="list-group-item">
                                 <div class="input-group">
                                     Phone
-                                    <input id="phone" type="text" class="ml-5 form-control text-right" v-model="form.phone"
-                                        name="phone" placeholder="Phone" autocomplete="phone">
+                                    <input id="phone" type="text" class="ml-5 form-control text-right"
+                                        v-model="form.phone" name="phone" placeholder="Phone" autocomplete="phone">
                                 </div>
                                 <InputError :message="form.errors.phone"></InputError>
                             </li>
@@ -77,4 +81,3 @@ export default {
         </div>
     </div>
 </template>
-    

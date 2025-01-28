@@ -119,7 +119,7 @@ export default {
             <InputCard title="Basic data">
                 <div class="row">
                     <div class="col-lg-6">
-                        <div class="container-fluild form-group">
+                        <div class="container-fluid form-group">
                             <label for="work_zone_id">Work zone ID
                                 <Req />
                             </label>
@@ -129,7 +129,7 @@ export default {
                             </div>
                             <InputError :message="form.errors.work_zone_id"></InputError>
                         </div>
-                        <div class="container-fluild form-group">
+                        <div class="container-fluid form-group">
                             <label for="name">Name
                                 <Req />
                             </label>
@@ -155,7 +155,7 @@ export default {
                         </div>
                     </div>
                     <div class="col-lg-6">
-                        <div class="container-fluild form-group">
+                        <div class="container-fluid form-group">
                             <label for="start_date">Start date
                                 <Req />
                             </label>
@@ -165,7 +165,7 @@ export default {
                             </div>
                             <InputError :message="form.errors.start_date"></InputError>
                         </div>
-                        <div class="container-fluild form-group">
+                        <div class="container-fluid form-group">
                             <label for="image">Image</label>
                             <div class="input-group mb-3">
                                 <input type="file" accept="image/*" @input="acceptImage" />
@@ -186,7 +186,7 @@ export default {
                         <div id="map"></div>
                     </div>
                     <div class="col-md-4">
-                        <div class="container-fluild form-group">
+                        <div class="container-fluid form-group">
                             <label for="location">Location</label>
                             <div class="input-group mb-3">
                                 <input id="location" type="text" class="form-control" v-model="form.location"
@@ -194,7 +194,7 @@ export default {
                             </div>
                             <InputError :message="form.errors.location"></InputError>
                         </div>
-                        <div class="container-fluild form-group">
+                        <div class="container-fluid form-group">
                             <label for="latitude">Latitude (deg)
                                 <Req />
                             </label>
@@ -205,7 +205,7 @@ export default {
                             </div>
                             <InputError :message="form.errors.latitude"></InputError>
                         </div>
-                        <div class="container-fluild form-group">
+                        <div class="container-fluid form-group">
                             <label for="longitude">Longitude (deg)
                                 <Req />
                             </label>
@@ -222,7 +222,7 @@ export default {
             <InputCard title="System">
                 <div class="row">
                     <div class="col-lg-6">
-                        <div class="container-fluild form-group">
+                        <div class="container-fluid form-group">
                             <label for="system_id">System ID</label>
                             <div class="input-group mb-3">
                                 <input id="system_id" type="text" class="form-control" v-model="form.system_id"
@@ -244,7 +244,7 @@ export default {
                         </div>
                     </div>
                     <div class="col-lg-6">
-                        <div class="container-fluild form-group">
+                        <div class="container-fluid form-group">
                             <label for="system_start_date">System start date</label>
                             <div class="input-group mb-3">
                                 <input id="system_start_date" type="date" class="form-control"
@@ -259,7 +259,7 @@ export default {
             <InputCard title="Description">
                 <div class="row">
                     <div class="col">
-                        <div class="container-fluild form-group">
+                        <div class="container-fluid form-group">
                             <div class="input-group">
                                 <textarea placeholder="Description" v-model="form.description" class="form-control"
                                     name="description" id="description" autocomplete="description" rows="5"></textarea>

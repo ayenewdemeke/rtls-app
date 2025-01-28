@@ -7,23 +7,23 @@ use Intervention\Image\ImageManager;
 
 class ImageUploader
 {
-    // public static function upload_user_image($image)
-    // {
-    //     $extention = $image->getClientOriginalExtension();
-    //     $image_name_to_save = uniqid('user_') . time() . '.' . $extention;
+    public static function uploadUserImage($image)
+    {
+        $extension = $image->getClientOriginalExtension();
+        $imageNameToSave = uniqid('user_') . time() . '.' . $extension;
 
-    //     $img = Image::make($image)->orientate(); // Handle orientation once
-    //     $size = min(1000, $img->width());
+        $manager = new ImageManager(new Driver());
+        $img = $manager->read($image->getPathname())->orient();
 
-    //     $img->resize($size, null, function ($constraint) {
-    //         $constraint->aspectRatio();
-    //     });
+        $img->scale(width: 1000);
 
-    //     $csize = min($img->width(), $img->height());
-    //     $img->crop($csize, $csize)->save(storage_path('app/public/user/image/' . $image_name_to_save));
+        $cropSize = min($img->width(), $img->height());
+        $img->crop($cropSize, $cropSize);
 
-    //     return $image_name_to_save;
-    // }
+        $img->save(storage_path('app/public/user/image/' . $imageNameToSave));
+
+        return $imageNameToSave;
+    }
 
     public static function uploadWorkZoneImage($image)
     {

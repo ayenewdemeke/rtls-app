@@ -17,12 +17,17 @@ class WorkZonesController extends Controller
     {
         $work_zones = WorkZone::with('work_zone_status')->get();
         return inertia('WorkZones/Index')->with([
-            'work_zones' => $work_zones
+            'work_zones' => $work_zones,
+            'can' => [
+                'create_work_zone' => Gate::allows('create', WorkZone::class),
+            ],
         ]);
     }
 
     public function create()
     {
+        Gate::authorize('create', WorkZone::class);
+
         $work_zone_statuses = WorkZoneStatus::all();
         $system_statuses = SystemStatus::all();
         return inertia('WorkZones/Create')->with([
@@ -33,6 +38,8 @@ class WorkZonesController extends Controller
 
     public function store(Request $request)
     {
+        Gate::authorize('create', WorkZone::class);
+
         $validated = $request->validate([
             'work_zone_id' => 'string|required|unique:work_zones,work_zone_id',
             'name' => 'string|required',
@@ -65,6 +72,9 @@ class WorkZonesController extends Controller
         $work_zone = WorkZone::with(['work_zone_status', 'system_status'])->findOrFail($id);
         return inertia('WorkZones/Show')->with([
             'work_zone' => $work_zone,
+            'can' => [
+                'delete_work_zone' => Gate::allows('delete', $work_zone),
+            ],
         ]);
     }
 
@@ -100,6 +110,8 @@ class WorkZonesController extends Controller
         if ($request->email === Auth::user()->email) {
             // Find the work zone by ID, or fail if not found
             $work_zone = WorkZone::findOrFail($id);
+
+            Gate::authorize('delete', $work_zone);
 
             // Delete associated images and thumbnails if they exist
             if ($work_zone->image) {

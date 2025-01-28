@@ -1,7 +1,7 @@
 <script setup>
-defineProps({
-    user: Object
-})
+import { usePage } from '@inertiajs/vue3'
+
+const { user } = usePage().props.auth
 </script>
 <script>
 import UserLayout from '@/Layouts/UserLayout.vue'
@@ -9,16 +9,19 @@ export default {
     layout: UserLayout
 }
 </script>
-    
+
 <template>
+
+    <Head title="Profile" />
+
     <div class="pt-3">
-        <div class="card">
+        <div class="card p-3">
             <div class="row">
                 <div class="col-md-6 offset-md-3">
                     <div class="text-center my-5">
-                        <img v-if="user.image" :src="'/storage/user/image/' + user.image" class="rounded" style="width: 25%"
-                            alt="">
-                        <img v-else :src="'/storage/user/image/default.png'" class="rounded" style="width: 25%" alt="image">
+                        <img v-if="user.image" :src="'/storage/user/image/' + user.image" class="rounded"
+                            style="width: 25%" alt="">
+                        <img v-else :src="'/image/user/default.png'" class="rounded" style="width: 25%" alt="image">
                     </div>
                     <ul class="list-group list-group-unbordered">
                         <li class="list-group-item">
@@ -40,4 +43,3 @@ export default {
         </div>
     </div>
 </template>
-    

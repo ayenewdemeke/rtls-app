@@ -3,6 +3,7 @@ import List from '@/Components/List.vue'
 defineProps({
     work_zone: Object,
     devices: Object,
+    can: Object
 })
 </script>
 
@@ -22,7 +23,7 @@ export default {
                 <div class="col-6">
                     <h4 class="font-weight-normal">Devices</h4>
                 </div>
-                <div class="col-6 text-right">
+                <div v-if="can.manage_device" class="col-6 text-right">
                     <Link class="btn btn-primary" :href="route('user.work_zone.devices.create', work_zone.id)">Add
                     device
                     </Link>
@@ -45,11 +46,11 @@ export default {
                     <td>{{ device.mac_address }}</td>
                     <td>{{ device.device_type.name }}</td>
                     <td :class="{
-                        'text-primary': device.device_status_id === 1, // Pending
-                        'text-success': device.device_status_id === 2, // Working
-                        'text-warning': device.device_status_id === 3, // Under maintenance
-                        'text-danger': device.device_status_id === 4, // Not working
-                    }">{{ device.device_status.name }}</td>
+                    'text-primary': device.device_status_id === 1, // Pending
+                    'text-success': device.device_status_id === 2, // Working
+                    'text-warning': device.device_status_id === 3, // Under maintenance
+                    'text-danger': device.device_status_id === 4, // Not working
+                }">{{ device.device_status.name }}</td>
                     <td>{{ device.latitude }}</td>
                     <td>{{ device.longitude }}</td>
                     <td>

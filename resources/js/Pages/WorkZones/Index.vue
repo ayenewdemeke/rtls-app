@@ -2,6 +2,7 @@
 import List from '@/Components/List.vue'
 defineProps({
     work_zones: Object,
+    can: Object
 })
 </script>
 
@@ -21,7 +22,7 @@ export default {
                 <div class="col-6">
                     <h4 class="font-weight-normal">Work zones</h4>
                 </div>
-                <div class="col-6 text-right">
+                <div v-if="can.create_work_zone" class="col-6 text-right">
                     <Link class="btn btn-primary" :href="route('user.work_zones.create')">Add
                     work zone
                     </Link>
@@ -45,10 +46,10 @@ export default {
                     <td>{{ new Date(work_zone.start_date).toLocaleDateString() }}</td>
                     <td>{{ work_zone.location }}</td>
                     <td :class="{
-                        'text-primary': work_zone.work_zone_status.name === 'Pending',
-                        'text-success': work_zone.work_zone_status.name === 'Active',
-                        'text-danger': work_zone.work_zone_status.name === 'Inactive'
-                    }">
+                    'text-primary': work_zone.work_zone_status.name === 'Pending',
+                    'text-success': work_zone.work_zone_status.name === 'Active',
+                    'text-danger': work_zone.work_zone_status.name === 'Inactive'
+                }">
                         {{ work_zone.work_zone_status.name }}
                     </td>
                     <td>

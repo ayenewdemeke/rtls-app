@@ -8,6 +8,7 @@ use App\Models\DeviceStatus;
 use App\Models\DeviceType;
 use App\Models\WorkZone;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class DeviceController extends Controller
 {
@@ -17,12 +18,17 @@ class DeviceController extends Controller
         $devices = $work_zone->devices()->with(['device_type', 'device_status'])->get();
         return inertia('WorkZones/WorkZone/Devices/Index')->with([
             'work_zone' => $work_zone,
-            'devices' => $devices
+            'devices' => $devices,
+            'can' => [
+                'manage_device' => Gate::allows('manage', Device::class),
+            ],
         ]);
     }
 
     public function create($id)
     {
+        Gate::authorize('manage', Device::class);
+
         $work_zone = WorkZone::findOrFail($id);
         $device_types = DeviceType::all();
         $device_statuses = DeviceStatus::all();
@@ -35,6 +41,8 @@ class DeviceController extends Controller
 
     public function store($id, Request $request)
     {
+        Gate::authorize('manage', Device::class);
+
         $validated = $request->validate([
             'mac_address' => 'string|required|unique:devices,mac_address',
             'device_type_id' => 'integer|required',

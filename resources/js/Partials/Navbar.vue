@@ -24,7 +24,7 @@
                                 <img v-if="$page.props.auth.user.image"
                                     :src="'/storage/user/image/' + $page.props.auth.user.image" class="rounded-circle"
                                     height="30" alt="img" loading="lazy" />
-                                <img v-else :src="'/storage/user/image/default.png'" class="rounded-circle" height="35"
+                                <img v-else :src="'/image/user/default.png'" class="rounded-circle" height="35"
                                     alt="img" loading="lazy" />
                             </a>
                             <ul class="dropdown-menu">

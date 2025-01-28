@@ -29,61 +29,74 @@ const readingChartData = {
     IMUAngularVelocityZ: { labels: [], data: [], color: 'teal' },
 }
 
-// Listen for ReadingUpdated events
-Echo.private('reading-updates').listen('ReadingUpdated', (e) => {
-    const timestamp = e.reading.time
+// Listen for GPS ReadingUpdated events
+Echo.private('gps-reading-updates').listen('GpsReadingUpdated', (e) => {
+    const timestamp = e.gpsReading.time
 
+    // Update GPS X data
     readingChartData.GpsX.labels.push(timestamp)
-    readingChartData.GpsX.data.push(e.reading.gps_x)
+    readingChartData.GpsX.data.push(e.gpsReading.gps_x)
     if (readingChartData.GpsX.labels.length > 30) {
         readingChartData.GpsX.labels.shift()
         readingChartData.GpsX.data.shift()
     }
 
+    // Update GPS Y data
     readingChartData.GpsY.labels.push(timestamp)
-    readingChartData.GpsY.data.push(e.reading.gps_y)
+    readingChartData.GpsY.data.push(e.gpsReading.gps_y)
     if (readingChartData.GpsY.labels.length > 30) {
         readingChartData.GpsY.labels.shift()
         readingChartData.GpsY.data.shift()
     }
 
+    if (readingChart) {
+        updateReadingChart()
+    }
+})
+
+// Listen for IMU ReadingUpdated events
+Echo.private('imu-reading-updates').listen('ImuReadingUpdated', (e) => {
+    const timestamp = e.imuReading.time
+
+    // Update IMU Acceleration data
     readingChartData.IMUAccelerationX.labels.push(timestamp)
-    readingChartData.IMUAccelerationX.data.push(e.reading.imu_acceleration_x)
+    readingChartData.IMUAccelerationX.data.push(e.imuReading.imu_acceleration_x)
     if (readingChartData.IMUAccelerationX.labels.length > 30) {
         readingChartData.IMUAccelerationX.labels.shift()
         readingChartData.IMUAccelerationX.data.shift()
     }
 
     readingChartData.IMUAccelerationY.labels.push(timestamp)
-    readingChartData.IMUAccelerationY.data.push(e.reading.imu_acceleration_y)
+    readingChartData.IMUAccelerationY.data.push(e.imuReading.imu_acceleration_y)
     if (readingChartData.IMUAccelerationY.labels.length > 30) {
         readingChartData.IMUAccelerationY.labels.shift()
         readingChartData.IMUAccelerationY.data.shift()
     }
 
     readingChartData.IMUAccelerationZ.labels.push(timestamp)
-    readingChartData.IMUAccelerationZ.data.push(e.reading.imu_acceleration_z)
+    readingChartData.IMUAccelerationZ.data.push(e.imuReading.imu_acceleration_z)
     if (readingChartData.IMUAccelerationZ.labels.length > 30) {
         readingChartData.IMUAccelerationZ.labels.shift()
         readingChartData.IMUAccelerationZ.data.shift()
     }
 
+    // Update IMU Angular Velocity data
     readingChartData.IMUAngularVelocityX.labels.push(timestamp)
-    readingChartData.IMUAngularVelocityX.data.push(e.reading.imu_angular_velocity_x)
+    readingChartData.IMUAngularVelocityX.data.push(e.imuReading.imu_angular_velocity_x)
     if (readingChartData.IMUAngularVelocityX.labels.length > 30) {
         readingChartData.IMUAngularVelocityX.labels.shift()
         readingChartData.IMUAngularVelocityX.data.shift()
     }
 
     readingChartData.IMUAngularVelocityY.labels.push(timestamp)
-    readingChartData.IMUAngularVelocityY.data.push(e.reading.imu_angular_velocity_y)
+    readingChartData.IMUAngularVelocityY.data.push(e.imuReading.imu_angular_velocity_y)
     if (readingChartData.IMUAngularVelocityY.labels.length > 30) {
         readingChartData.IMUAngularVelocityY.labels.shift()
         readingChartData.IMUAngularVelocityY.data.shift()
     }
 
     readingChartData.IMUAngularVelocityZ.labels.push(timestamp)
-    readingChartData.IMUAngularVelocityZ.data.push(e.reading.imu_angular_velocity_z)
+    readingChartData.IMUAngularVelocityZ.data.push(e.imuReading.imu_angular_velocity_z)
     if (readingChartData.IMUAngularVelocityZ.labels.length > 30) {
         readingChartData.IMUAngularVelocityZ.labels.shift()
         readingChartData.IMUAngularVelocityZ.data.shift()

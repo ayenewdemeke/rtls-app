@@ -12,7 +12,8 @@ import ShowCard from '@/Components/ShowCard.vue'
 import { useForm } from '@inertiajs/vue3'
 
 const props = defineProps({
-    work_zone: Object
+    work_zone: Object,
+    can: Object
 })
 
 const deleteForm = useForm({
@@ -86,13 +87,13 @@ export default {
     <ShowCard title="Basic data">
         <div class="row">
             <div class="col-lg-6">
-                <div class="container-fluild form-group">
+                <div class="container-fluid form-group">
                     <label for="work_zone_id">Work zone ID</label>
                     <div>
                         {{ work_zone.work_zone_id }}
                     </div>
                 </div>
-                <div class="container-fluild form-group">
+                <div class="container-fluid form-group">
                     <label for="name">Name</label>
                     <div>
                         {{ work_zone.name }}
@@ -110,13 +111,13 @@ export default {
                 </div>
             </div>
             <div class="col-lg-6">
-                <div class="container-fluild form-group">
+                <div class="container-fluid form-group">
                     <label for="start_date">Start date</label>
                     <div>
                         {{ work_zone.start_date }}
                     </div>
                 </div>
-                <div class="container-fluild form-group">
+                <div class="container-fluid form-group">
                     <label for="location">Location</label>
                     <div>
                         {{ work_zone.location }}
@@ -141,7 +142,7 @@ export default {
     <ShowCard title="System">
         <div class="row">
             <div class="col-lg-6">
-                <div class="container-fluild form-group">
+                <div class="container-fluid form-group">
                     <label for="system_id">System ID</label>
                     <div>
                         {{ work_zone.system_id }}
@@ -160,7 +161,7 @@ export default {
                 </div>
             </div>
             <div class="col-lg-6">
-                <div class="container-fluild form-group">
+                <div class="container-fluid form-group">
                     <label for="system_start_date">Start date</label>
                     <div>
                         {{ work_zone.system_start_date }}
@@ -172,7 +173,7 @@ export default {
     <ShowCard title="Description">
         <div class="row">
             <div class="col">
-                <div class="container-fluild form-group">
+                <div class="container-fluid form-group">
                     {{ work_zone.description }}
                 </div>
             </div>
@@ -180,7 +181,8 @@ export default {
     </ShowCard>
     <div class="text-right py-3">
         <Link :href="route('user.work_zones.index')" class="btn btn-outline-primary mr-2">Back</Link>
-        <button type="button" class="btn btn-danger mr-2" data-bs-toggle="modal" data-bs-target="#deleteModal">
+        <button v-if="can.delete_work_zone" type="button" class="btn btn-danger mr-2" data-bs-toggle="modal"
+            data-bs-target="#deleteModal">
             Delete
         </button>
     </div>

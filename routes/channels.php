@@ -14,6 +14,14 @@ Broadcast::channel('reading-updates', function ($user) {
     return $user !== null;
 });
 
+Broadcast::channel('gps-reading-updates', function ($user) {
+    return $user !== null;
+});
+
+Broadcast::channel('imu-reading-updates', function ($user) {
+    return $user !== null;
+});
+
 Broadcast::channel('measurement-updates', function ($user) {
     return $user !== null;
 });

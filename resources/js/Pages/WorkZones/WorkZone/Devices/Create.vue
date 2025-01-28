@@ -42,7 +42,7 @@ export default {
             <InputCard title="Basic data">
                 <div class="row">
                     <div class="col-lg-6">
-                        <div class="container-fluild form-group">
+                        <div class="container-fluid form-group">
                             <label for="mac_address">Device MAC Address
                                 <Req />
                             </label>
@@ -88,7 +88,7 @@ export default {
             <InputCard title="Description">
                 <div class="row">
                     <div class="col">
-                        <div class="container-fluild form-group">
+                        <div class="container-fluid form-group">
                             <div class="input-group">
                                 <textarea placeholder="Description" v-model="form.description" class="form-control"
                                     name="description" id="description" autocomplete="description" rows="5"></textarea>

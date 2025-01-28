@@ -181,7 +181,7 @@ export default {
                     <div class="col-md-6 col-lg-4 my-auto">
                         <img v-if="work_zone.image" :src="'/storage/work_zone/image/' + work_zone.image"
                             style="width: 100%" alt="image">
-                        <img v-else :src="'/storage/work_zone/image/default.jpg'" style="width: 100%" alt="image">
+                        <img v-else :src="'/image/work_zone/image/default.jpg'" style="width: 100%" alt="image">
                     </div>
 
                     <div class="col-md-6 col-lg-8 my-auto">

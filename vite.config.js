@@ -20,7 +20,6 @@ export default defineConfig({
         VitePWA({
             registerType: 'autoUpdate',
             injectRegister: 'auto',
-            outDir: 'public',
             manifest: {
                 name: 'MnDOT Work Zone',
                 short_name: 'MnDOT',
